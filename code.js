@@ -49,8 +49,8 @@ const URL = window.URL,
 	hrefBypass = (regex, f) => {
 		if (bypassed) return;
 		if (typeof f != "function") alert("AdsBypasser: Bypass for " + domain + " is not a function");
-			let res = regex.exec(window.location.href)
-		
+
+		let res = regex.exec(window.location.href)
 		if (res) {
 			window.document.title += ' - AdsBypasser';
 			bypassed = true;

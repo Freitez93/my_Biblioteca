@@ -157,7 +157,7 @@ domainBypass(/(deportealdia|techgeek|noticiasesports)\.(live|digital)/, () => {
 	})
 });
 
-// https://
+// https://www.shortique.com/ || https://www.adz7short.space/ || https://short.croclix.me/
 domainBypass(/(shortique|adz7short|croclix)\.(com|space|me)/, () => {
 	awaitElement('#continue:not([style^="display"])', button => {
 		button.click();

@@ -200,9 +200,9 @@ domainBypass('bitmos.co.in', () => {
 })
 
 // https://ouo.io
-domainBypass('ouo.io', () => {
+domainBypass(/ouo\.(press|io)/, () => {
 	awaitElement('#btn-main:not([disabled])', button => {
-		button.click();
+		setTimeout(() => { button.click() }, 1000);
 	})
 });
 

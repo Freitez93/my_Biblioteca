@@ -52,7 +52,7 @@ const URL = window.URL,
 			let res = regex.exec(window.location.href)
 		
 		if (res) {
-			document.title += ' - AdsBypasser';
+			window.document.title += ' - AdsBypasser';
 			bypassed = true;
 			f(res)
 		}
@@ -63,13 +63,13 @@ const URL = window.URL,
 
 		if (typeof domain == "string") {
 			if (hostName == domain || hostName.substr(hostName.length - (domain.length + 1)) == "." + domain) {
-				document.title += ' - AdsBypasser';
+				window.document.title += ' - AdsBypasser';
 				bypassed = true
 				f()
 			}
 		} else if ("test" in domain) {
 			if (domain.test(hostName)) {
-				document.title += ' - AdsBypasser';
+				window.document.title += ' - AdsBypasser';
 				bypassed = true
 				f()
 			}

@@ -115,6 +115,9 @@ hrefBypass(/ccurl\.net(.+)redirectpage/, () => {
 // https://zagl.info
 hrefBypass(/zagl\.info/, () => {
 	if (referer.indexOf('/verify') < 0) safelyAssign(referer + '/verify');
+	ifElement('#go-link', from => {
+		from.sumit();
+	})
 });
 
 // https://faucet.100count.net

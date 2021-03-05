@@ -133,6 +133,18 @@ hrefBypass(/(movies|anime|tech)\.dutchycorp\.space/, () => {
 	})
 });
 
+// https://shortit.pw/
+hrefBypass(/shortit\.pw/, () => {
+	ifElement('#btn2[href]', href => {
+		window.document.title =+ ' - AdsBypasser'
+		safelyAssign(href)
+	}, () => {
+		awaitElement('#btn2:not([disabled])', button => {
+			button.click();
+		})
+	})
+});
+
 // https://fc.lc
 domainBypass(/(fc|fcc)\.lc/, () => {
 	ifElement('#submitbtn', button => {

@@ -5,6 +5,10 @@ let bypassed = false,
 	hostName = window.location.hostname;
 const URL = window.URL,
 	parseTarget = target => target instanceof HTMLAnchorElement ? target.href : target,
+	unsafelyAssignWithReferer = (target, referer) => {
+		//The background script will intercept this request and handle it.
+		location.href="https://universal-bypass.org/navigate?target="+encodeURIComponent(target)+"&referer="+encodeURIComponent(referer)
+	},
 	unsafelyAssign = target => {
 		navigated = true
 		window.onbeforeunload = null

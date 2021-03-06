@@ -161,10 +161,10 @@ domainBypass(/(fc|fcc)\.lc/, () => {
 });
 
 // https://adbull.me || https://adshort.co || https://pingit.im
-hrefBypass(/(techgeek|deportealdia|noticiasesports)\.(digital|live)/, () => {
+domainBypass(/(techgeek|deportealdia|noticiasesports)\.(digital|live)/, () => {
 	let siteDir = 'https://adshort.co/';
 	if (hostName.indexOf('deportealdia.live') > -1) siteDir = 'https://adbull.me/';
-	if (hostName.indexOf('noticiasesports.live') > -1) siteDir = 'https://pingit.im/';
+	if (hostName.indexOf('noticiasesports.live') > -1) siteDir = 'https://pngit.live/';
 	ifElement('form', href => {
 		var thisCode = document.querySelector('input[type=hidden]:nth-child(1)').value;
 		var thisRefe = document.querySelector('input[type=hidden]:nth-child(2)').value;

@@ -145,13 +145,19 @@ hrefBypass(/(movies|anime|tech)\.dutchycorp\.space/, () => {
 // https://shortit.pw/
 hrefBypass(/shortit\.pw/, () => {
 	ifElement('#btn2[href]', href => {
-		window.document.title =+ ' - AdsBypasser'
 		safelyAssign(href)
 	}, () => {
 		awaitElement('#btn2:not([disabled])', button => {
 			button.click();
 		})
 	})
+});
+
+// https://try2link.net/
+hrefBypass(/4tgamers\.com(.+)link=/, () => {
+	let arrayHref = referer.split('&');
+	let linkFinal = arrayHref[0].split('=')[1] + '?done=' + arrayHref[1].split('=')[1];
+	safelyAssign('https://try2link.net/' + linkFinal);
 });
 
 // https://fc.lc

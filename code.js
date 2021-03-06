@@ -101,6 +101,11 @@ hrefBypass(/uniqueten\.net(.+)link=/, () => {
 	safelyAssign('https://ultraten.net/home/sh//' + referer.split('=')[1])
 });
 
+// https://yourtechnology.online/
+hrefBypass(/yourtechnology\.online(.+)i=/, () => {
+	safelyAssign('https://yourtechnology.online/?postid=' + referer.split('=')[1])
+})
+
 // https://freebcc.org
 hrefBypass(/freebcc\.org(.+)a\//, () => {
 	safelyAssign(referer.replace('a/', ''))

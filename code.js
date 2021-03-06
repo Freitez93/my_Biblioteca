@@ -103,7 +103,7 @@ hrefBypass(/uniqueten\.net(.+)link=/, () => {
 
 // https://yourtechnology.online/
 hrefBypass(/yourtechnology\.online(.+)i=/, () => {
-	safelyAssign('https://yourtechnology.online/?postid=' + referer.split('=')[1])
+	safelyAssign('https://yourtechnology.online/Download/' + referer.split('=')[1])
 })
 
 // https://freebcc.org

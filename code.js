@@ -168,7 +168,7 @@ domainBypass(/(techgeek|deportealdia|noticiasesports)\.(digital|live)/, () => {
 	ifElement('form', href => {
 		var thisCode = document.querySelector('input[type=hidden]:nth-child(1)').value;
 		var thisRefe = document.querySelector('input[type=hidden]:nth-child(2)').value;
-		safelyAssign(siteDir+thisCode+'?ref='+thisRefe)
+		setTimeout(() => safelyAssign(siteDir+thisCode+'?ref='+thisRefe), 2500)
 	})
 });
 

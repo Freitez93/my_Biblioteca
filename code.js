@@ -162,7 +162,7 @@ hrefBypass(/4tgamers\.com(.+)link=/, () => {
 
 // https://traffic2bitcoin.com/
 hrefBypass(/traffic2bitcoin\.com(.+)code=/, () => {
-	ifElement('input[captcha]', inputBox => {
+	awaitElement('input[captcha]', inputBox => {
 		let code = referer.split('&')[3].split('=')[1]
 		inputBox.val(code), document.querySelector("input[type=submit]").click();
 	})

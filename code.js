@@ -160,6 +160,14 @@ hrefBypass(/4tgamers\.com(.+)link=/, () => {
 	safelyAssign('https://try2link.net/' + linkFinal);
 });
 
+// https://traffic2bitcoin.com/
+hrefBypass(/traffic2bitcoin\.com(.+)code=/, () => {
+	ifElement('input[captcha]', inputBox => {
+		let code = referer.split('&')[3].split('=')[1]
+		inputBox.val(code), document.querySelector("input[type=submit]").click();
+	})
+});
+
 // https://fc.lc
 domainBypass(/(fc|fcc)\.lc/, () => {
 	ifElement('#submitbtn', button => {

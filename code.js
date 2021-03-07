@@ -162,11 +162,11 @@ hrefBypass(/4tgamers\.com(.+)link=/, () => {
 
 // https://traffic2bitcoin.com/
 hrefBypass(/traffic2bitcoin\.com(.+)code=/, () => {
-	awaitElement('input[captcha]', inputBox => {
+	awaitElement('input[type=text]', inputBox => {
 		let code = referer.split('&')[3].split('=')[1]
 		inputBox.val(code), document.querySelector("input[type=submit]").click();
 	})
-});
+});;
 
 // https://fc.lc
 domainBypass(/(fc|fcc)\.lc/, () => {

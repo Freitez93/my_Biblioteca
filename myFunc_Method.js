@@ -132,7 +132,7 @@ const getElementByXpath = (path) => document.evaluate(path, document, null, XPat
 // * async await sleep()
 function sleep(ms = 100) {
 	return new Promise(function(resolve, reject) {
-		setTimeout(() => resolve(), ms)
+		setTimeout(resolve, ms)
 	})
 };
 

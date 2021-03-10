@@ -3,6 +3,7 @@
 // @version      0.1.3
 // @description  Funciones personalizadas por mi.
 // @author       Freitez93
+// #github       https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js
 // ==/UserScript==
 
 let bypassed = false,
@@ -17,7 +18,7 @@ const parseTarget = target => target instanceof HTMLAnchorElement ? target.href 
 
 const unsafelyAssignWithReferer = (target, referer) => {
 	//The background script will intercept this request and handle it.
-	location.href='https://universal-bypass.org/navigate?target='+encodeURIComponent(target)+'&referer='+encodeURIComponent(referer)
+	location.href = 'https://universal-bypass.org/navigate?target=' + encodeURIComponent(target) + '&referer=' + encodeURIComponent(referer)
 };
 
 const unsafelyAssign = target => {
@@ -42,7 +43,8 @@ const safelyAssign = target => {
 const isGoodLink = link => {
 	if (typeof link != 'string' || (link.split('#')[0] == referer.split('#')[0] && !isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
 		return false
-	} try {
+	}
+	try {
 		new URL(link)
 	} catch (e) {
 		return false
@@ -53,7 +55,7 @@ const isGoodLink = link => {
 // Verifica si un elemento está disponible a través de document.querySelector:
 const ifElement = (element, func, exfunc) => {
 	let e = document.querySelector(element)
-	if (e){
+	if (e) {
 		func(e)
 	} else if (exfunc) exfunc();
 };
@@ -135,13 +137,13 @@ function sleep(ms = 100) {
 };
 
 // async await focusMethod()
-function focusMethod(element, ms){
-	return new Promise(function(resolve, reject) => {
+function focusMethod(element, ms) {
+	return new Promise(function(resolve, reject) {
 		let thisElement = document.querySelector(element);
-		if (thisElement){
-			let adjustment = Math.max(0, $(window).height() - $(element).outerHeight(true) );
+		if (thisElement) {
+			let adjustment = Math.max(0, $(window).height() - $(element).outerHeight(true));
 			let distance = $(element).offset().top - adjustment;
-			let smooth = ms || (distance * 0.8);
+			let smooth = ms || (distance * 1.2);
 
 			thisElement.scrollIntoView({
 				block: "center",

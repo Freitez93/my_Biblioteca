@@ -122,7 +122,7 @@ const ensureDomLoaded = (f, if_not_bypassed) => {
 };
 
 // Obtener un numero random entre (min, max)
-const getRandom = (min, max) => Math.floor(Math.random() * (max - min)) + min,
+const getRandom = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
 // Obtiene el Valor Xpath
 const getElementByXpath = (path) => document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;

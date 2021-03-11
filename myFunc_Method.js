@@ -1,8 +1,9 @@
 // ==UserScript==
-// @name         myFunc Method
-// @version      0.1.3
-// @description  Funciones personalizadas por mi.
-// @author       Freitez93
+// @name            myFunc_Method
+// @version         0.1.3
+// @description     Funciones personalizadas por mi.
+// @author          Freitez93
+// @require         https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js
 // ==/UserScript==
 // ==/UserLibrary==
 // #github       https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js
@@ -54,19 +55,19 @@ isGoodLink = link => {
 },
 
 // Verifica si un elemento está disponible a través de document.querySelector:
-ifElement = (element, func, exfunc) => {
+ifElement = async(element, callback, exfunc) => {
 	let e = document.querySelector(element)
 	if (e) {
-		func(e)
+		callback(e)
 	} else if (exfunc) exfunc();
 },
 
 // Espera hasta que un elemento esté disponible a través de un selector de consultas:
-awaitElement = (element, func) => {
+awaitElement = async(element, callback) => {
 	let t = setInterval(() => {
 		let e = document.querySelector(element)
 		if (e) {
-			func(e);
+			callback(e);
 			clearInterval(t);
 		}
 	}, 600)
@@ -74,34 +75,34 @@ awaitElement = (element, func) => {
 },
 
 // Se activa si la expresión regular coincide con cualquier parte de la URL
-hrefBypass = (regex, func) => {
+hrefBypass = async(regex, callback) => {
 	if (bypassed) return;
-	if (typeof func != 'function') alert('AdsBypasser: Bypass for ' + hostName + ' is not a function');
+	if (typeof callback != 'function') alert('AdsBypasser: Bypass for ' + hostName + ' is not a function');
 
 	let res = regex.exec(window.location.href)
 	if (res) {
 		window.document.title += ' - AdsBypasser';
 		bypassed = true;
-		func(res)
+		callback(res)
 	}
 },
 
 // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
-domainBypass = (domain, func) => ensureDomLoaded(() => {
+domainBypass = async(domain, callback) => ensureDomLoaded(() => {
 	if (bypassed) return;
-	if (typeof func != 'function') alert('AdsBypasser: Bypass for ' + domain + ' is not a function');
+	if (typeof callback != 'function') alert('AdsBypasser: Bypass for ' + domain + ' is not a function');
 
 	if (typeof domain == 'string') {
 		if (hostName == domain || hostName.substr(hostName.length - (domain.length + 1)) == '.' + domain) {
 			window.document.title += ' - AdsBypasser';
 			bypassed = true
-			func()
+			callback()
 		}
 	} else if ('test' in domain) {
 		if (domain.test(hostName)) {
 			window.document.title += ' - AdsBypasser';
 			bypassed = true
-			func()
+			callback()
 		}
 	} else {
 		console.error('[AdsBypasser] Invalid domain:', domain)
@@ -109,16 +110,16 @@ domainBypass = (domain, func) => ensureDomLoaded(() => {
 }),
 
 // Se activa tan pronto como el DOM está listo
-ensureDomLoaded = (func, if_not_bypassed) => {
+ensureDomLoaded = async(callback, if_not_bypassed) => {
 	if (if_not_bypassed && bypassed) return;
 	if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
-		func()
+		callback()
 	} else {
 		let triggered = false
 		document.addEventListener('DOMContentLoaded', () => {
 			if (!triggered) {
 				triggered = true
-				setTimeout(func, 1)
+				setTimeout(callback, 1)
 			}
 		})
 	}

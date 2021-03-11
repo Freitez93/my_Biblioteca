@@ -3,7 +3,6 @@
 // @version      0.1.3
 // @description  Funciones personalizadas por mi.
 // @author       Freitez93
-// @run-at       document-
 // ==/UserScript==
 // ==/UserLibrary==
 // #github       https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js

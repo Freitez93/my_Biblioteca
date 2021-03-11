@@ -76,7 +76,7 @@ awaitElement = (element, func) => {
 // Se activa si la expresión regular coincide con cualquier parte de la URL
 hrefBypass = (regex, func) => {
 	if (bypassed) return;
-	if (typeof f != 'function') alert('AdsBypasser: Bypass for ' + hostName + ' is not a function');
+	if (typeof func != 'function') alert('AdsBypasser: Bypass for ' + hostName + ' is not a function');
 
 	let res = regex.exec(window.location.href)
 	if (res) {
@@ -87,21 +87,21 @@ hrefBypass = (regex, func) => {
 },
 
 // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
-domainBypass = (domain, f) => ensureDomLoaded(() => {
+domainBypass = (domain, func) => ensureDomLoaded(() => {
 	if (bypassed) return;
-	if (typeof f != 'function') alert('AdsBypasser: Bypass for ' + domain + ' is not a function');
+	if (typeof func != 'function') alert('AdsBypasser: Bypass for ' + domain + ' is not a function');
 
 	if (typeof domain == 'string') {
 		if (hostName == domain || hostName.substr(hostName.length - (domain.length + 1)) == '.' + domain) {
 			window.document.title += ' - AdsBypasser';
 			bypassed = true
-			f()
+			func()
 		}
 	} else if ('test' in domain) {
 		if (domain.test(hostName)) {
 			window.document.title += ' - AdsBypasser';
 			bypassed = true
-			f()
+			func()
 		}
 	} else {
 		console.error('[AdsBypasser] Invalid domain:', domain)
@@ -109,16 +109,16 @@ domainBypass = (domain, f) => ensureDomLoaded(() => {
 }),
 
 // Se activa tan pronto como el DOM está listo
-ensureDomLoaded = (f, if_not_bypassed) => {
+ensureDomLoaded = (func, if_not_bypassed) => {
 	if (if_not_bypassed && bypassed) return;
 	if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
-		f()
+		func()
 	} else {
 		let triggered = false
 		document.addEventListener('DOMContentLoaded', () => {
 			if (!triggered) {
 				triggered = true
-				setTimeout(f, 1)
+				setTimeout(func, 1)
 			}
 		})
 	}

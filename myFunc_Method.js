@@ -4,9 +4,9 @@
 // @description     Funciones personalizadas por mi.
 // @author          Freitez93
 // @require         https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js
-// ==/UserScript==
+// #github          https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js
 // ==/UserLibrary==
-// #github       https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js
+// ==/UserScript==
 
 
 'use strict';
@@ -139,7 +139,7 @@ function sleep(ms = 100) {
 };
 
 // async await focusMethod()
-function focusMethod(element, ms) {
+async function focusMethod(element, ms) {
 	return new Promise(function(resolve, reject) {
 		let thisElement = document.querySelector(element);
 		if (thisElement) {
@@ -151,7 +151,7 @@ function focusMethod(element, ms) {
 				block: "center",
 				behavior: "smooth"
 			});
-			setTimeout(resolve, smooth)
+			await sleep(smooth).then(resolve)
 		} else {
 			reject('[Error] Elemento no encontrado usando focusMethod.');
 		}

@@ -55,7 +55,7 @@ isGoodLink = link => {
 },
 
 // Verifica si un elemento está disponible a través de document.querySelector:
-ifElement = async(element, callback, exfunc) => {
+ifElement = (element, callback, exfunc) => {
 	let e = document.querySelector(element)
 	if (e) {
 		callback(e)
@@ -63,7 +63,7 @@ ifElement = async(element, callback, exfunc) => {
 },
 
 // Espera hasta que un elemento esté disponible a través de un selector de consultas:
-awaitElement = async(element, callback) => {
+awaitElement = (element, callback) => {
 	let t = setInterval(() => {
 		let e = document.querySelector(element)
 		if (e) {
@@ -75,7 +75,7 @@ awaitElement = async(element, callback) => {
 },
 
 // Se activa si la expresión regular coincide con cualquier parte de la URL
-hrefBypass = async(regex, callback) => {
+hrefBypass = (regex, callback) => {
 	if (bypassed) return;
 	if (typeof callback != 'function') alert('AdsBypasser: Bypass for ' + hostName + ' is not a function');
 
@@ -88,7 +88,7 @@ hrefBypass = async(regex, callback) => {
 },
 
 // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
-domainBypass = async(domain, callback) => ensureDomLoaded(() => {
+domainBypass = (domain, callback) => ensureDomLoaded(() => {
 	if (bypassed) return;
 	if (typeof callback != 'function') alert('AdsBypasser: Bypass for ' + domain + ' is not a function');
 
@@ -110,7 +110,7 @@ domainBypass = async(domain, callback) => ensureDomLoaded(() => {
 }),
 
 // Se activa tan pronto como el DOM está listo
-ensureDomLoaded = async(callback, if_not_bypassed) => {
+ensureDomLoaded = (callback, if_not_bypassed) => {
 	if (if_not_bypassed && bypassed) return;
 	if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
 		callback()

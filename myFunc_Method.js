@@ -140,7 +140,7 @@ function sleep(ms = 100) {
 
 // async await focusMethod()
 async function focusMethod(element, ms) {
-	return new Promise(function(resolve, reject) {
+	return new Promise(async function(resolve, reject) {
 		let thisElement = document.querySelector(element);
 		if (thisElement) {
 			let adjustment = Math.max(0, $(window).height() - $(element).outerHeight(true));

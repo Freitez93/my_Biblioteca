@@ -56,28 +56,33 @@ isGoodLink = link => {
 
 // Verifica si un elemento está disponible a través de document.querySelector:
 ifElement = (element, callback, exfunc) => {
-	let e = document.querySelector(element)
-	if (e) {
-		callback(e)
-	} else if (exfunc) exfunc();
+	let selector = document.querySelector(element)
+	if (selector) {
+		callback(selector)
+	} else if (exfunc) {
+		exfunc();
+	}
 },
 
 // Espera hasta que un elemento esté disponible a través de un selector de consultas:
-awaitElement = (element, callback) => {
-	let t = setInterval(() => {
-		let e = document.querySelector(element)
-		if (e) {
-			callback(e);
-			clearInterval(t);
+awaitElement = (element, callback, interval = 100) => {
+	let retry = setInterval(()=>{
+		let selector = document.querySelector(element)
+        
+        interval--
+		if (selector) {
+			callback(selector)
+			clearInterval(retry)
+		} else if (interval == 0) {
+			clearInterval(retry)
 		}
-	}, 600)
-	setInterval(() => clearInterval(t), 60000)
+	}, 300)
 },
 
 // Se activa si la expresión regular coincide con cualquier parte de la URL
 hrefBypass = (regex, callback) => {
 	if (bypassed) return;
-	if (typeof callback != 'function') alert('AdsBypasser: Bypass for ' + hostName + ' is not a function');
+	if (typeof callback != 'function') alert('hrefBypass: Bypass for ' + hostName + ' is not a function');
 
 	let res = regex.exec(window.location.href)
 	if (res) {
@@ -90,7 +95,7 @@ hrefBypass = (regex, callback) => {
 // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
 domainBypass = (domain, callback) => ensureDomLoaded(() => {
 	if (bypassed) return;
-	if (typeof callback != 'function') alert('AdsBypasser: Bypass for ' + domain + ' is not a function');
+	if (typeof callback != 'function') alert('domainBypass: Bypass for ' + domain + ' is not a function');
 
 	if (typeof domain == 'string') {
 		if (hostName == domain || hostName.substr(hostName.length - (domain.length + 1)) == '.' + domain) {
@@ -145,7 +150,7 @@ async function focusMethod(element, ms) {
 		if (thisElement) {
 			let adjustment = Math.max(0, $(window).height() - $(element).outerHeight(true));
 			let distance = $(element).offset().top - adjustment;
-			let smooth = ms || (distance * 1.2);
+			let smooth = ms || (distance * 0.8) < 1500 ? 3000 : (distance * 0.8)
 
 			thisElement.scrollIntoView({
 				block: "center",

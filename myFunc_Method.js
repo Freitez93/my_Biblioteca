@@ -68,8 +68,8 @@ ifElement = (element, callback, exfunc) => {
 awaitElement = (element, callback, interval = 100) => {
 	let retry = setInterval(()=>{
 		let selector = document.querySelector(element)
-        
-        interval--
+
+		interval--
 		if (selector) {
 			callback(selector)
 			clearInterval(retry)
@@ -146,16 +146,13 @@ function sleep(ms = 100) {
 // async await focusMethod()
 async function focusMethod(element, ms) {
 	return new Promise(async(resolve, reject) => {
-		let thisElement = document.querySelector(element);
+		let thisElement = typeof element == 'object' ? element : document.querySelector(element);
 		if (thisElement) {
 			let adjustment = Math.max(0, $(window).height() - $(element).outerHeight(true));
 			let distance = $(element).offset().top - adjustment;
-			let smooth = ms || (distance * 0.8) < 1500 ? 3000 : (distance * 0.8)
+			let smooth = ms || (distance * 0.8) < 1500 ? 1500 : (distance * 0.8)
 
-			thisElement.scrollIntoView({
-				block: "center",
-				behavior: "smooth"
-			});
+			thisElement.focus()
 			await sleep(smooth).then(resolve)
 		} else {
 			reject('[Error] Elemento no encontrado usando focusMethod.');

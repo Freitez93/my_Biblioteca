@@ -144,7 +144,7 @@ function sleep(ms = 100) {
 };
 
 // async await focusMethod()
-async function focusMethod(element, ms) {
+async function focusMethod(element, scroll = false, ms) {
 	return new Promise(async(resolve, reject) => {
 		let thisElement = typeof element == 'object' ? element : document.querySelector(element);
 		if (thisElement) {
@@ -152,7 +152,7 @@ async function focusMethod(element, ms) {
 			let distance = $(element).offset().top - adjustment;
 			let smooth = ms || (distance * 0.8) < 1500 ? 1500 : (distance * 0.8)
 
-			thisElement.focus()
+			thisElement.focus({ preventScroll: scroll })
 			await sleep(smooth).then(resolve)
 		} else {
 			reject('[Error] Elemento no encontrado usando focusMethod.');

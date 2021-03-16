@@ -143,22 +143,29 @@ function sleep(ms = 100) {
 	})
 };
 
-// async await focusMethod()
-async function focusMethod(element, ms) {
+// async await smoothScroll()
+async function smoothScroll(element, settings = null, ms) {
 	return new Promise(async(resolve, reject) => {
 		let thisElement = typeof element == 'object' ? element : document.querySelector(element);
+
 		if (thisElement) {
+			if (settings){
+				if (settings.focusPage)
+					window.focus();
+				await sleep(ms || 2500);
+			}
 			let elementStats = thisElement.getBoundingClientRect()
-			let distance = elementStats.top - Math.max(0, window.outerHeight - elementStats.height);
-			let smooth = ms || (distance * 0.8 < 1500) ? 1500 : distance * 0.8
+			let adjustment = Math.max(0, (window.outerHeight/2) - elementStats.height);
+			let distance = elementStats.top - adjustment
+			let smooth = ms || distance * 0.8
 
 			thisElement.scrollIntoView({
 				block: "center",
 				behavior: "smooth"
 			});
-			await sleep(smooth).then(resolve)
+			sleep(smooth).then(resolve)
 		} else {
-			reject('[Error] Elemento no encontrado usando focusMethod.');
+			reject('[Error] Elemento no encontrado usando smoothScroll.');
 		}
 	})
 };

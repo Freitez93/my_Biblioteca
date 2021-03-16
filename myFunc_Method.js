@@ -150,9 +150,12 @@ async function smoothScroll(element, settings = null, ms) {
 
 		if (thisElement) {
 			if (settings){
-				if (settings.focusPage)
-					window.focus();
-				await sleep(ms || 2500);
+				let vBlock = settings.block || 'center'
+				let vBehavior = settings.behavior || 'smooth'
+				let vinline = settings.inline || 'nearest'
+				if (settings.focusPage) window.focus();
+
+				await sleep(ms || 1500);
 			}
 			let elementStats = thisElement.getBoundingClientRect()
 			let adjustment = Math.max(0, (window.outerHeight/2) - elementStats.height);
@@ -160,8 +163,9 @@ async function smoothScroll(element, settings = null, ms) {
 			let smooth = ms || distance * 0.8
 
 			thisElement.scrollIntoView({
-				block: "center",
-				behavior: "smooth"
+				block: vBlock,
+				inline: vinline,
+				behavior: vBehavior
 			});
 			sleep(smooth).then(resolve)
 		} else {

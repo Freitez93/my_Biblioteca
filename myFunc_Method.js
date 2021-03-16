@@ -3,7 +3,6 @@
 // @version         0.1.3
 // @description     Funciones personalizadas por mi.
 // @author          Freitez93
-// @require         https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js
 // #github          https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js
 // ==/UserLibrary==
 // ==/UserScript==
@@ -149,25 +148,20 @@ async function smoothScroll(element, settings = null, ms) {
 		let thisElement = typeof element == 'object' ? element : document.querySelector(element);
 
 		if (thisElement) {
-			if (settings){
-				let vBlock = settings.block || 'center'
-				let vBehavior = settings.behavior || 'smooth'
-				let vinline = settings.inline || 'nearest'
+			if (settings) {
 				if (settings.focusPage) window.focus();
-
 				await sleep(ms || 1500);
 			}
 			let elementStats = thisElement.getBoundingClientRect()
 			let adjustment = Math.max(0, (window.outerHeight/2) - elementStats.height);
 			let distance = elementStats.top - adjustment
-			let smooth = ms || distance * 0.8
 
 			thisElement.scrollIntoView({
-				block: vBlock,
-				inline: vinline,
-				behavior: vBehavior
+				block: (settings.block || 'center'),
+				inline: (settings.inline || 'nearest'),
+				behavior: (settings.behavior || 'smooth')
 			});
-			sleep(smooth).then(resolve)
+			sleep(ms || distance * 0.8).then(resolve)
 		} else {
 			reject('[Error] Elemento no encontrado usando smoothScroll.');
 		}

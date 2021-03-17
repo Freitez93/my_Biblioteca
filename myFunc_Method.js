@@ -143,7 +143,7 @@ function sleep(ms = 100) {
 };
 
 // async await smoothScroll()
-async function smoothScroll(element, settings = null, ms) {
+async function smoothScroll(element, settings = false, ms) {
 	return new Promise(async(resolve, reject) => {
 		let thisElement = typeof element == 'object' ? element : document.querySelector(element);
 
@@ -157,9 +157,9 @@ async function smoothScroll(element, settings = null, ms) {
 			let distance = elementStats.top - adjustment
 
 			thisElement.scrollIntoView({
-				block: (settings && settings.block ? settings.block : 'center'),
-				inline: (settings && settings.inline ? settings.inline : 'nearest'),
-				behavior: (settings && settings.behavior ? settings.behavior : 'smooth')
+				block: settings.block || 'center',
+				inline: settings.inline || 'nearest',
+				behavior: settings.behavior || 'smooth'
 			});
 			sleep(ms || distance * 0.8).then(resolve)
 		} else {

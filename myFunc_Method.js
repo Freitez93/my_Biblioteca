@@ -123,7 +123,7 @@ ensureDomLoaded = (callback, if_not_bypassed) => {
 		document.addEventListener('DOMContentLoaded', () => {
 			if (!triggered) {
 				triggered = true
-				setTimeout(callback, 1)
+				setTimeout(callback, 100)
 			}
 		})
 	}
@@ -161,7 +161,7 @@ async function smoothScroll(element, settings = false, ms) {
 				inline: settings.inline || 'nearest',
 				behavior: settings.behavior || 'smooth'
 			});
-			sleep(ms || distance * 0.8).then(resolve)
+			sleep(ms || distance * 0.8).then(function() { resolve(thisElement) })
 		} else {
 			reject('[Error] Elemento no encontrado usando smoothScroll.');
 		}

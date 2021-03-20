@@ -29,7 +29,7 @@ const myFunc = {
 	},
 	safelyAssign : target => {
 		target = myFunc.parseTarget(target)
-		if (navigated || !isGoodLink(target)) return false;
+		if (navigated || !myFunc.isGoodLink(target)) return false;
 
 		bypassed = true
 		let url = new URL(target)

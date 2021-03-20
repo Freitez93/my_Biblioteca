@@ -17,13 +17,16 @@ var bypassed = false,
 	URL = window.URL;
 
 const myFunc = {
+	parseTarget : target => {
+		return target instanceof HTMLAnchorElement ? target.href : target
+	},
 	unsafelyAssignWithReferer : (target, referer) => { // The background script will intercept this request and handle it.
-		location.href = 'https://universal-bypass.org/navigate?target=' + encodeURIComponent(target) + '&referer=' + encodeURIComponent(referer)
+		window.location.href = 'https://universal-bypass.org/navigate?target=' + encodeURIComponent(target) + '&referer=' + encodeURIComponent(referer)
 	},
 	unsafelyAssign : target => {
 		navigated = true
 		window.onbeforeunload = null
-		location.assign(target)
+		window.location.assign(target)
 	},
 	safelyAssign : target => {
 		target = parseTarget(target)

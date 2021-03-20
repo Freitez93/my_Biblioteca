@@ -35,7 +35,7 @@ const myFunc = {
 		let url = new URL(target)
 		if (!url || !url.hash) target += location.hash;
 
-		unsafelyAssign(target)
+		myFunc.unsafelyAssign(target)
 		return true
 	},
 	isGoodLink : link => { // Verifica que sea una direccion correcta.

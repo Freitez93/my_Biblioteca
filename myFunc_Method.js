@@ -15,7 +15,6 @@ var bypassed = false,
 	referer = window.location.href,
 	hostName = window.location.hostname.substr(0,4) == "www." ? window.location.hostname.substr(4) : window.location.hostname,
 	URL = window.URL;
-
 const myFunc = {
 	parseTarget : target => {
 		return target instanceof HTMLAnchorElement ? target.href : target
@@ -29,7 +28,7 @@ const myFunc = {
 		window.location.assign(target)
 	},
 	safelyAssign : target => {
-		target = parseTarget(target)
+		target = myFunc.parseTarget(target)
 		if (navigated || !isGoodLink(target)) return false;
 
 		bypassed = true

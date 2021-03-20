@@ -9,13 +9,16 @@
 
 
 'use strict';
-var bypassed = false,
-	navigated = false,
-	isGoodLink_allowSelf = false,
-	referer = window.location.href,
-	hostName = window.location.hostname.substr(0,4) == "www." ? window.location.hostname.substr(4) : window.location.hostname,
-	URL = window.URL;
 const myFunc = {
+	// config Inicial.
+	bypassed : false,
+	navigated : false,
+	isGoodLink_allowSelf : false,
+	URL : window.URL,
+	referer : window.location.href,
+	hostName : (window.location.hostname.substr(0,4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
+	// end config.
+
 	parseTarget : target => {
 		return target instanceof HTMLAnchorElement ? target.href : target
 	},
@@ -23,26 +26,26 @@ const myFunc = {
 		window.location.href = 'https://universal-bypass.org/navigate?target=' + encodeURIComponent(target) + '&referer=' + encodeURIComponent(referer)
 	},
 	unsafelyAssign : target => {
-		navigated = true
+		myFunc.navigated = true
 		window.onbeforeunload = null
 		window.location.assign(target)
 	},
 	safelyAssign : target => {
 		target = myFunc.parseTarget(target)
-		if (navigated || !myFunc.isGoodLink(target)) return false;
+		if (myFunc.navigated || !myFunc.isGoodLink(target)) return false;
 
-		bypassed = true
-		let url = new URL(target)
+		myFunc.bypassed = true
+		let url = new myFunc.URL(target)
 		if (!url || !url.hash) target += location.hash;
 
 		myFunc.unsafelyAssign(target)
 		return true
 	},
 	isGoodLink : link => { // Verifica que sea una direccion correcta.
-		if (typeof link != 'string' || (link.split('#')[0] == referer.split('#')[0] && !isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
+		if (typeof link != 'string' || (link.split('#')[0] == myFunc.referer.split('#')[0] && !myFunc.isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
 			return false
 		} try {
-			new URL(link)
+			new myFunc.URL(link)
 		} catch (e) {
 			return false
 		}
@@ -69,30 +72,30 @@ const myFunc = {
 		}, 1000);
 	},
 	hrefBypass : (regex, callback) => { // Se activa si la expresión regular coincide con cualquier parte de la URL
-		if (bypassed) return;
-		if (typeof callback != 'function') alert('hrefBypass: Bypass for ' + hostName + ' is not a function');
+		if (myFunc.bypassed) return;
+		if (typeof callback != 'function') alert('hrefBypass: Bypass for ' + myFunc.hostName + ' is not a function');
 
 		var result = regex.exec(window.location.href)
 		if (result) {
 			window.document.title += ' - AdsBypasser';
-			bypassed = true;
+			myFunc.bypassed = true;
 			callback(result)
 		}
 	},
 	domainBypass : (domain, callback) => ensureDomLoaded(() => { // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
-		if (bypassed) return;
+		if (myFunc.bypassed) return;
 		if (typeof callback != 'function') alert('domainBypass: Bypass for ' + domain + ' is not a function');
 
 		if (typeof domain == 'string') {
-			if (hostName == domain || hostName.substr(hostName.length - (domain.length + 1)) == '.' + domain) {
+			if (myFunc.hostName == domain || myFunc.hostName.substr(myFunc.hostName.length - (domain.length + 1)) == '.' + domain) {
 				window.document.title += ' - AdsBypasser';
-				bypassed = true
+				myFunc.bypassed = true
 				callback()
 			}
 		} else if ('test' in domain) {
-			if (domain.test(hostName)) {
+			if (domain.test(myFunc.hostName)) {
 				window.document.title += ' - AdsBypasser';
-				bypassed = true
+				myFunc.bypassed = true
 				callback()
 			}
 		} else {
@@ -100,7 +103,7 @@ const myFunc = {
 		}
 	}),
 	ensureDomLoaded : (callback, if_not_bypassed) => { // Se activa tan pronto como el DOM está listo
-		if (if_not_bypassed && bypassed) return;
+		if (if_not_bypassed && myFunc.bypassed) return;
 		if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
 			callback()
 		} else {

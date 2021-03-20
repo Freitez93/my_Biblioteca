@@ -82,7 +82,7 @@ const myFunc = {
 			callback(result)
 		}
 	},
-	domainBypass : (domain, callback) => ensureDomLoaded(() => { // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
+	domainBypass : (domain, callback) => myFunc.ensureDomLoaded(() => { // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
 		if (myFunc.bypassed) return;
 		if (typeof callback != 'function') alert('domainBypass: Bypass for ' + domain + ' is not a function');
 

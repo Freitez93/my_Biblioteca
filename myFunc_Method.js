@@ -178,12 +178,12 @@ const myFunc = {
 		if (parts.length == 2)
 			return parts.pop().split(";").shift();
 	},
-	getElement : (selector, contextNode) => {
+	getElement : (selector, contextNode = document) => {
 		if (typeof selector === 'string') {
 			if (selector.indexOf('/') === 0) { // ex: //img[@class="photo"]
-				return document.evaluate(selector, contextNode || document, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				return document.evaluate(selector, contextNode, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 			}
-			return (contextNode || document).querySelector(selector);
+			return contextNode.querySelector(selector);
 		} else if (selector instanceof window.HTMLElement) {
 			return selector;
 		}
@@ -196,14 +196,13 @@ const myFunc = {
 			setTimeout(resolve, ms)
 		})
 	},
-	smoothScroll: async (selector, settings = false, ms) => { // async await smoothScroll()
-		return new Promise(async(resolve, reject) => {
+	smoothScroll: (selector, settings = false, ms) => { // async await smoothScroll()
+		return new Promise(function(resolve, reject) {
 			let element = myFunc.getElement(selector);
 
 			if (element) {
 				if (settings) {
 					if (settings.focusPage) window.focus();
-					await myFunc.sleep(ms || 1500);
 				}
 				let elementStats = element.getBoundingClientRect()
 				let adjustment = Math.max(0, (window.outerHeight/2) - elementStats.height);
@@ -216,7 +215,7 @@ const myFunc = {
 				});
 				myFunc.sleep(ms || distance * 0.8).then(function() { resolve(element) })
 			} else {
-				reject('[Error] Elemento no encontrado usando smoothScroll.');
+				reject('Elemento no encontrado usando smoothScroll.');
 			}
 		})
 	}

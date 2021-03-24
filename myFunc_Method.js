@@ -15,7 +15,7 @@ const myFunc = {
 	navigated : false,
 	isGoodLink_allowSelf : false,
 	URL : window.URL,
-	referer : window.location.href,
+	href : window.location.href,
 	hostName : (window.location.hostname.substr(0,4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
 	// end config.
 
@@ -42,7 +42,7 @@ const myFunc = {
 		return true
 	},
 	isGoodLink : link => { // Verifica que sea una direccion correcta.
-		if (typeof link != 'string' || (link.split('#')[0] == myFunc.referer.split('#')[0] && !myFunc.isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
+		if (typeof link != 'string' || (link.split('#')[0] == myFunc.href.split('#')[0] && !myFunc.isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
 			return false
 		} try {
 			new myFunc.URL(link)
@@ -61,14 +61,14 @@ const myFunc = {
 		}
 	},
 	awaitElement : (selector, callback, timeout) => { // Espera hasta que un elemento esté disponible a través de getElement. ex: timeout in sec.
-		var repeat = timeout || 30;
+		var repeat = timeout || 60;
 		var loop = setInterval(function () {
 			var element = myFunc.getElement(selector);
 			if (element) {
 				callback(element);
 				clearInterval(loop);
 			}
-			repeat = (repeat) ? repeat - 1 : clearInterval(loop);
+			repeat = (repeat) ? repeat -1 : clearInterval(loop);
 		}, 1000);
 	},
 	hrefBypass : (regex, callback) => { // Se activa si la expresión regular coincide con cualquier parte de la URL
@@ -122,12 +122,6 @@ const myFunc = {
 	reload : _blank => {
 		window.location.reload();
 	},
-	close : target => {
-		(target || window).close()
-	},
-	contains : (string, search) => {
-		return string.indexOf(search) != -1;
-	},
 	openInTab : url => {
 		if (typeof GM_openInTab != 'undefined') {
 			GM_openInTab(url);
@@ -178,7 +172,9 @@ const myFunc = {
 		if (parts.length == 2)
 			return parts.pop().split(";").shift();
 	},
-	getElement : (selector, contextNode = document) => {
+	getElement : (selector, contextNode) => {
+		var contextNode = contextNode || document
+
 		if (typeof selector === 'string') {
 			if (selector.indexOf('/') === 0) { // ex: //img[@class="photo"]
 				return document.evaluate(selector, contextNode, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -188,15 +184,15 @@ const myFunc = {
 			return selector;
 		}
 	},
-	getRandom : (min, max) => { // Obtener un numero random entre (min, max)
+	getRandom : (min = 0, max = 0) => { // Obtener un numero random entre (min, max)
 		return Math.floor(Math.random() * (max - min)) + min;
 	},
-	sleep : (ms = 100) => { // * async await sleep()
+	sleep : (msDelay = 100) => { // * async await sleep()
 		return new Promise(function(resolve, reject) {
-			setTimeout(resolve, ms)
+			setTimeout(resolve, msDelay)
 		})
 	},
-	smoothScroll: (selector, settings = false, ms) => { // async await smoothScroll()
+	smoothScroll: (selector, settings = false, msDelay) => { // async await smoothScroll()
 		return new Promise(function(resolve, reject) {
 			let element = myFunc.getElement(selector);
 
@@ -213,10 +209,19 @@ const myFunc = {
 					inline: settings.inline || 'nearest',
 					behavior: settings.behavior || 'smooth'
 				});
-				myFunc.sleep(ms || distance * 0.8).then(function() { resolve(element) })
+				myFunc.sleep(msDelay || distance * 0.8).then(function() { resolve(element) })
 			} else {
 				reject('Elemento no encontrado usando smoothScroll.');
 			}
 		})
+	},
+	arrayIndexOf: ( elem, list ) => { // Utilice un indexOf reducido, ya que es más rápido que el nativo
+		var len = list.length;
+		for ( var i=0; i < len; i++ ) {
+			if ( list[ i ] === elem ) {
+				return i
+			}
+		}
+		return -1
 	}
 };

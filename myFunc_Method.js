@@ -117,7 +117,7 @@ const myFunc = {
 		}
 	},
 	awaitState: (event, callback) => {
-		if (typeof event != 'string' || typeof event != 'object') return console.error('Formato de event es desconocido.')
+		if (typeof event != 'string') console.error('Event tiene que ser string.')
 		if (event.indexOf(document.readyState) > -1){
 			callback()
 		} else {
@@ -125,7 +125,7 @@ const myFunc = {
 				if (event.indexOf(document.readyState) > -1){
 					callback()
 				}
-			})
+			}, 1000)
 		}
 	},
 	refresh : _blank => {

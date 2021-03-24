@@ -117,12 +117,12 @@ const myFunc = {
 		}
 	},
 	awaitState: (event, callback) => {
-		if (typeof event != 'string') console.error('Event tiene que ser string.')
-		if (event.indexOf(document.readyState) > -1){
+		if(['loading', 'interactive', 'complete'].indexOf(event) == -1) console.error('Event desconocido.')
+		if (document.readyState == event){
 			callback()
 		} else {
 			let loop = setInterval(function(){
-				if (event.indexOf(document.readyState) > -1){
+				if (document.readyState == event){
 					clearInterval(loop)
 					callback()
 				}

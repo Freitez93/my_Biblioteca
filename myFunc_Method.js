@@ -116,6 +116,18 @@ const myFunc = {
 			})
 		}
 	},
+	awaitState: (event, callback) => {
+		if (typeof event != 'string' || typeof event != 'object') return console.error('Formato de event es desconocido.')
+		if (event.indexOf(document.readyState) > -1){
+			callback()
+		} else {
+			let loop = setInterval(function(){
+				if (event.indexOf(document.readyState) > -1){
+					callback()
+				}
+			})
+		}
+	},
 	refresh : _blank => {
 		window.location.href = window.location.href;
 	},

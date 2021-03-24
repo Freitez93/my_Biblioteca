@@ -116,10 +116,9 @@ const myFunc = {
 			})
 		}
 	},
-	awaitState: (event, callback) => myFunc.ensureDomLoaded(() => {
+	awaitState: (event, callback) => {
 		if(['loading', 'interactive', 'complete'].indexOf(event) == -1) console.error('Event desconocido.')
 		if (document.readyState == event){
-			
 			callback()
 		} else {
 			let loop = setInterval(function(){
@@ -129,7 +128,7 @@ const myFunc = {
 				}
 			}, 1000)
 		}
-	}),
+	},
 	refresh : _blank => {
 		window.location.href = window.location.href;
 	},

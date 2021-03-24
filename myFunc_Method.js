@@ -123,6 +123,7 @@ const myFunc = {
 		} else {
 			let loop = setInterval(function(){
 				if (event.indexOf(document.readyState) > -1){
+					clearInterval(loop)
 					callback()
 				}
 			}, 1000)

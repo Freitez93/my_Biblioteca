@@ -11,26 +11,26 @@
 'use strict';
 const myFunc = {
 	// config Inicial.
-	bypassed : false,
-	navigated : false,
-	isGoodLink_allowSelf : false,
-	URL : window.URL,
-	href : window.location.href,
-	hostName : (window.location.hostname.substr(0,4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
+	bypassed: false,
+	navigated: false,
+	isGoodLink_allowSelf: false,
+	URL: window.URL,
+	href: window.location.href,
+	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
 	// end config.
 
-	parseTarget : target => {
+	parseTarget: target => {
 		return target instanceof HTMLAnchorElement ? target.href : target
 	},
-	unsafelyAssignWithReferer : (target, referer) => { // The background script will intercept this request and handle it.
+	unsafelyAssignWithReferer: (target, referer) => { // The background script will intercept this request and handle it.
 		window.location.href = 'https://universal-bypass.org/navigate?target=' + encodeURIComponent(target) + '&referer=' + encodeURIComponent(referer)
 	},
-	unsafelyAssign : target => {
+	unsafelyAssign: target => {
 		myFunc.navigated = true
 		window.onbeforeunload = null
 		window.location.assign(target)
 	},
-	safelyAssign : target => {
+	safelyAssign: target => {
 		target = myFunc.parseTarget(target)
 		if (myFunc.navigated || !myFunc.isGoodLink(target)) return false;
 
@@ -41,37 +41,38 @@ const myFunc = {
 		myFunc.unsafelyAssign(target)
 		return true
 	},
-	isGoodLink : link => { // Verifica que sea una direccion correcta.
+	isGoodLink: link => { // Verifica que sea una direccion correcta.
 		if (typeof link != 'string' || (link.split('#')[0] == myFunc.href.split('#')[0] && !myFunc.isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
 			return false
-		} try {
+		}
+		try {
 			new myFunc.URL(link)
 		} catch (e) {
 			return false
 		}
 		return true
 	},
-	ifElement : (selector, callback, exfunc) => { // Verifica si un elemento está disponible a través de getElement:
+	ifElement: (selector, callback, exfunc) => { // Verifica si un elemento está disponible a través de getElement:
 		var element = myFunc.getElement(selector)
 
-		if (element){
+		if (element) {
 			callback(element)
-		} else if (exfunc){
+		} else if (exfunc) {
 			exfunc()
 		}
 	},
-	awaitElement : (selector, callback, timeout) => { // Espera hasta que un elemento esté disponible a través de getElement. ex: timeout in sec.
+	awaitElement: (selector, callback, timeout) => { // Espera hasta que un elemento esté disponible a través de getElement. ex: timeout in sec.
 		var repeat = timeout || 60;
-		var loop = setInterval(function () {
+		var loop = setInterval(function() {
 			var element = myFunc.getElement(selector);
 			if (element) {
 				callback(element);
 				clearInterval(loop);
 			}
-			repeat = (repeat) ? repeat -1 : clearInterval(loop);
+			repeat = (repeat) ? repeat - 1 : clearInterval(loop);
 		}, 1000);
 	},
-	hrefBypass : (regex, callback) => { // Se activa si la expresión regular coincide con cualquier parte de la URL
+	hrefBypass: (regex, callback) => { // Se activa si la expresión regular coincide con cualquier parte de la URL
 		if (myFunc.bypassed) return;
 		if (typeof callback != 'function') alert('hrefBypass: Bypass for ' + myFunc.hostName + ' is not a function');
 
@@ -82,7 +83,7 @@ const myFunc = {
 			callback(result)
 		}
 	},
-	domainBypass : (domain, callback) => myFunc.ensureDomLoaded(() => { // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
+	domainBypass: (domain, callback) => myFunc.ensureDomLoaded(() => { // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
 		if (myFunc.bypassed) return;
 		if (typeof callback != 'function') alert('domainBypass: Bypass for ' + domain + ' is not a function');
 
@@ -102,7 +103,7 @@ const myFunc = {
 			console.error('[AdsBypasser] Invalid domain:', domain)
 		}
 	}),
-	ensureDomLoaded : (callback, if_not_bypassed) => { // Se activa tan pronto como el DOM está listo
+	ensureDomLoaded: (callback, if_not_bypassed) => { // Se activa tan pronto como el DOM está listo
 		if (if_not_bypassed && myFunc.bypassed) return;
 		if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
 			callback()
@@ -117,25 +118,55 @@ const myFunc = {
 		}
 	},
 	awaitState: (event, callback) => {
-		if(['loading', 'interactive', 'complete'].indexOf(event) == -1) console.error('Event desconocido.')
-		if (document.readyState == event){
-			callback()
+		var jQuery = jQuery.fn.jquery;
+
+		if (typeof $ === 'function') {
+			if (jQuery.split('.')[0] == '3') {
+				$(window).on('load', callback)
+			} else {
+				$(window).load(callback)
+			}
 		} else {
-			let loop = setInterval(function(){
-				if (document.readyState == event){
+			if (['loading', 'interactive', 'complete'].indexOf(event) == -1) console.error('Event desconocido.')
+			let loop = setInterval(function() {
+				if (document.readyState == event) {
 					clearInterval(loop)
 					callback()
 				}
-			}, 1000)
+			}, 500)
 		}
 	},
-	refresh : _blank => {
+	docReady: (callback, context) => {
+		// si el documento ya está listo, programe la función callback para que se ejecute
+		// IE solo es seguro cuando readyState está "complete", otros seguros cuando readyState es "interactive"
+		if (document.readyState === 'complete' || (!document.attachEvent && document.readyState === 'interactive')) {
+			setTimeout(callback, 1);
+		} else {
+			// de lo contrario, si no tenemos controladores de eventos instalados, instálelos
+			if (document.addEventListener) {
+				// la primera opción es el evento DOMContentLoaded
+				document.addEventListener("DOMContentLoaded", function(){
+					// copia de seguridad es el evento de window load
+					window.addEventListener("load", callback, false);
+				}, false);
+			} else {
+				// debe ser IE
+				document.attachEvent("onreadystatechange", function(){
+					if (document.readyState === 'complete'){
+						setTimeout(callback, 1);
+					}
+				});
+				window.attachEvent("onload", callback);
+			}
+		}
+	},
+	refresh: _blank => {
 		window.location.href = window.location.href;
 	},
-	reload : _blank => {
+	reload: _blank => {
 		window.location.reload();
 	},
-	openInTab : url => {
+	openInTab: url => {
 		if (typeof GM_openInTab != 'undefined') {
 			GM_openInTab(url);
 		} else {
@@ -143,7 +174,7 @@ const myFunc = {
 			newWindow.focus();
 		}
 	},
-	deleteValue : name => {
+	deleteValue: name => {
 		if (typeof GM_deleteValue !== "undefined" && !name) {
 			var vals = GM_listValues();
 			for (var i in vals) {
@@ -154,12 +185,12 @@ const myFunc = {
 			GM_deleteValue(name);
 		}
 	},
-	setValue : (name, value) => {
+	setValue: (name, value) => {
 		if (typeof GM_setValue !== "undefined") {
 			GM_setValue(name, value);
 		}
 	},
-	getValue : name => {
+	getValue: name => {
 		if (typeof GM_listValues !== "undefined" && !name) {
 			var list = {};
 			var vals = GM_listValues();
@@ -174,33 +205,33 @@ const myFunc = {
 			return null;
 		}
 	},
-	setCookie : (name, value, time, path) => {
+	setCookie: (name, value, time, path) => {
 		var expires = new Date();
 		expires.setTime(new Date().getTime() + (time || 365 * 24 * 60 * 60 * 1000));
 		document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + expires.toGMTString() + ";path=" + (path || '/');
 	},
-	getCookie : name => {
+	getCookie: name => {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
 		if (parts.length == 2)
 			return parts.pop().split(";").shift();
 	},
-	getElement : (selector, contextNode) => {
-		var contextNode = contextNode || document
+	getElement: (selector, contextNode) => {
+		var ctx = contextNode || document
 
 		if (typeof selector === 'string') {
 			if (selector.indexOf('/') === 0) { // ex: //img[@class="photo"]
-				return document.evaluate(selector, contextNode, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+				return document.evaluate(selector, ctx, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 			}
-			return contextNode.querySelector(selector);
+			return ctx.querySelector(selector);
 		} else if (selector instanceof window.HTMLElement) {
 			return selector;
 		}
 	},
-	getRandom : (min = 0, max = 0) => { // Obtener un numero random entre (min, max)
+	getRandom: (min = 0, max = 0) => { // Obtener un numero random entre (min, max)
 		return Math.floor(Math.random() * (max - min)) + min;
 	},
-	sleep : (msDelay = 100) => { // * async await sleep()
+	sleep: (msDelay = 100) => { // * async await sleep()
 		return new Promise(function(resolve, reject) {
 			setTimeout(resolve, msDelay)
 		})
@@ -214,7 +245,7 @@ const myFunc = {
 					if (settings.focusPage) window.focus();
 				}
 				let elementStats = element.getBoundingClientRect()
-				let adjustment = Math.max(0, (window.outerHeight/2) - elementStats.height);
+				let adjustment = Math.max(0, (window.outerHeight / 2) - elementStats.height);
 				let distance = elementStats.top - adjustment
 
 				element.scrollIntoView({
@@ -228,10 +259,10 @@ const myFunc = {
 			}
 		})
 	},
-	arrayIndexOf: ( elem, list ) => { // Utilice un indexOf reducido, ya que es más rápido que el nativo
+	arrayIndexOf: (elem, list) => { // Utilice un indexOf reducido, ya que es más rápido que el nativo
 		var len = list.length;
-		for ( var i=0; i < len; i++ ) {
-			if ( list[ i ] === elem ) {
+		for (var i = 0; i < len; i++) {
+			if (list[i] === elem) {
 				return i
 			}
 		}

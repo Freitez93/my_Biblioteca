@@ -119,29 +119,23 @@ const myFunc = {
 	},
 	onReady: callback => {
 		var version = jQuery.fn.jquery;
-		var readyFired = false;
-		var ready = function(){
-			if ( !readyFired ){
-				readyFired = true;
-				setTimeout(callback, 100)
-			}
-		}
 
 		if (typeof $ === 'function') {
-			if (version.split('.')[0] == '3') {
-				$(window).on('load', ready)
+			if ( version.split('.')[0] === '3' ) {
+				$(window).on('load', callback)
 			} else {
-				$(window).load(ready)
+				$(window).load(callback)
 			}
 		} else {
-			if (document.readyState === 'complete') {
-				ready()
+			if (document.readyState === 'complete') { // O también compare con 'interactivo'
+				setTimeout(callback, 100) // Programar para que se ejecute de inmediato
 			} else {
-				// la primera opción es el evento DOMContentLoaded
-				document.addEventListener('DOMContentLoaded', ready, false)
-
-				// por si el primer evento no funciona seguimos con window load
-				window.addEventListener('load', ready, false)
+				var readyStateCheckInterval = setInterval(function() {
+					if (document.readyState === 'complete') { // O también compare con 'interactivo'
+						clearInterval(readyStateCheckInterval)
+						setTimeout(callback, 100)
+					}
+				}, 1000)
 			}
 		}
 	},

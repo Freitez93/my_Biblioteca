@@ -117,10 +117,11 @@ const myFunc = {
 			})
 		}
 	},
-	onReady: callback => {
+	onReady: (callback, jQuery_) => {
 		var version = jQuery.fn.jquery;
+		var jQueryForce = jQuery_ || true
 
-		if (typeof $ === 'function') {
+		if (jQueryForce && typeof $ === 'function') {
 			if ( version.split('.')[0] === '3' ) {
 				$(window).on('load', callback)
 			} else {

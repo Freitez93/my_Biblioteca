@@ -10,14 +10,16 @@
 
 'use strict';
 const myFunc = {
-	// config Inicial.
+	// ------------------------------------------------------- config Inicial.
 	bypassed: false,
 	navigated: false,
 	isGoodLink_allowSelf: false,
 	URL: window.URL,
 	href: window.location.href,
 	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
-	// end config.
+	// debug config.
+	debug: true,
+	// ------------------------------------------------------- end config.
 
 	parseTarget: target => {
 		return target instanceof HTMLAnchorElement ? target.href : target
@@ -117,16 +119,20 @@ const myFunc = {
 			})
 		}
 	},
-	onReady: (callback, contextNode) => {
-		if (typeof $ === 'function') {
-			var version = $.fn.jquery
+	onReady: (callback, forceNative) => {
+		var jQueryMethod = forceNative || false
 
+		if (typeof $ === 'function' && !jQueryMethod) {
+			var version = $.fn.jquery.split(' -')[0]
+
+			msgDebug('[onReady] jQuery v' +version)
 			if ( version.split('.')[0] === '3' ) {
 				$(window).on('load', callback)
 			} else {
 				$(window).load(callback)
 			}
 		} else {
+			msgDebug('[onReady] Version JsNative')
 			if (document.readyState === 'complete') { // O también compare con 'interactivo'
 				setTimeout(callback, 100) // Programar para que se ejecute de inmediato
 			} else {
@@ -248,3 +254,9 @@ const myFunc = {
 		return -1
 	}
 };
+
+function msgDebug(string, force){
+	if ( force || myFunc.debug ){
+		console.log('%c'+string, 'font-weight: bold; color:grey')
+	}
+}

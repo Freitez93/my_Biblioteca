@@ -21,6 +21,11 @@ const myFunc = {
 	debug: true,
 	// ------------------------------------------------------- end config.
 
+	msgDebug: (string, force) => {
+		if ( force || myFunc.debug ){
+			console.log('%c'+string, 'font-weight: bold; color:grey')
+		}
+	},
 	parseTarget: target => {
 		return target instanceof HTMLAnchorElement ? target.href : target
 	},
@@ -119,26 +124,24 @@ const myFunc = {
 			})
 		}
 	},
-	onReady: (callback, jsNative) => {
-		var jQueryMethod = jsNative || false
-
-		if (typeof $ === 'function' && !jQueryMethod) {
+	onReady: (callback, jQueryMethod = true) => {
+		if (typeof $ === 'function' && jQueryMethod) {
 			var version = $.fn.jquery.split(' -')[0]
 
-			msgDebug('[onReady] jQuery v' +version)
+			myFunc.msgDebug('[onReady] jQuery v' +version)
 			if ( version.split('.')[0] === '3' ) {
 				$(window).on('load', callback)
 			} else {
 				$(window).load(callback)
 			}
 		} else {
-			msgDebug('[onReady] Version JsNative')
+			myFunc.msgDebug('[onReady] Version JsNative')
 			if (document.readyState === 'complete') { // O también compare con 'interactivo'
 				setTimeout(callback, 100) // Programar para que se ejecute de inmediato
 			} else {
-				var readyStateCheckInterval = setInterval(function() {
+				var readyStateCheck = setInterval(function() {
 					if (document.readyState === 'complete') { // O también compare con 'interactivo'
-						clearInterval(readyStateCheckInterval)
+						clearInterval(readyStateCheck)
 						setTimeout(callback, 100)
 					}
 				}, 1000)
@@ -254,9 +257,3 @@ const myFunc = {
 		return -1
 	}
 };
-
-function msgDebug(string, force){
-	if ( force || myFunc.debug ){
-		console.log('%c'+string, 'font-weight: bold; color:grey')
-	}
-}

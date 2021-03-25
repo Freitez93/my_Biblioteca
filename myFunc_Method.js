@@ -119,10 +119,10 @@ const myFunc = {
 			})
 		}
 	},
-	onReady: (callback, forceNative) => {
-		var jQueryMethod = forceNative || false
+	onReady: (callback, jQuery_) => {
+		var jQueryMethod = jQuery_ || true
 
-		if (typeof $ === 'function' && !jQueryMethod) {
+		if (typeof $ === 'function' && jQueryMethod) {
 			var version = $.fn.jquery.split(' -')[0]
 
 			msgDebug('[onReady] jQuery v' +version)

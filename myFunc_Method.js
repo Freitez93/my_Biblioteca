@@ -124,15 +124,15 @@ const myFunc = {
 			})
 		}
 	},
-	onReady: (callback, jQueryMethod = true) => {
-		if (typeof $ === 'function' && jQueryMethod) {
-			var version = $.fn.jquery.split(' -')[0]
+	onReady: (callback) => {
+		var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false
 
-			myFunc.msgDebug('[onReady] jQuery v' +version)
-			if ( version.split('.')[0] === '3' ) {
+		if ( jQueryVer ) {
+			myFunc.msgDebug('[onReady] jQuery v' +jQueryVer)
+			if ( jQueryVer.split('.')[0] === '3'){
 				$(window).on('load', callback)
 			} else {
-				$(window).load(() => callback)
+				$(window).load(callback);
 			}
 		} else {
 			myFunc.msgDebug('[onReady] Version JsNative')

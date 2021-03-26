@@ -73,8 +73,8 @@ const myFunc = {
 		var loop = setInterval(function() {
 			var element = myFunc.getElement(selector);
 			if (element) {
-				callback(element);
 				clearInterval(loop);
+				callback(element);
 			}
 			repeat = (repeat) ? repeat - 1 : clearInterval(loop);
 		}, 1000);
@@ -132,7 +132,7 @@ const myFunc = {
 			if ( version.split('.')[0] === '3' ) {
 				$(window).on('load', callback)
 			} else {
-				$(window).load(callback)
+				$(window).load(() => callback)
 			}
 		} else {
 			myFunc.msgDebug('[onReady] Version JsNative')

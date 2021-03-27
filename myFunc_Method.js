@@ -17,7 +17,6 @@ const myFunc = {
 	URL: window.URL,
 	href: window.location.href,
 	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
-	isTopframe: (window.parent == window.self),
 	// debug config.
 	debug: false,
 	// ------------------------------------------------------- end config.

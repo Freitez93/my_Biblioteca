@@ -17,8 +17,9 @@ const myFunc = {
 	URL: window.URL,
 	href: window.location.href,
 	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
+	isTopframe: (window.parent == window.self),
 	// debug config.
-	debug: true,
+	debug: false,
 	// ------------------------------------------------------- end config.
 
 	msgDebug: (string, force) => {
@@ -28,9 +29,6 @@ const myFunc = {
 	},
 	parseTarget: target => {
 		return target instanceof HTMLAnchorElement ? target.href : target
-	},
-	unsafelyAssignWithReferer: (target, referer) => { // The background script will intercept this request and handle it.
-		window.location.href = 'https://universal-bypass.org/navigate?target=' + encodeURIComponent(target) + '&referer=' + encodeURIComponent(referer)
 	},
 	unsafelyAssign: target => {
 		myFunc.navigated = true
@@ -128,25 +126,28 @@ const myFunc = {
 		var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false
 
 		if ( jQueryVer ) {
-			myFunc.msgDebug('[onReady] jQuery v' +jQueryVer)
+			myFunc.msgDebug('[onReady] jQuery v' +jQueryVer, true)
 			if ( jQueryVer.split('.')[0] === '3'){
 				$(window).on('load', callback)
 			} else {
 				$(window).load(callback);
 			}
 		} else {
-			myFunc.msgDebug('[onReady] Version JsNative')
+			myFunc.msgDebug('[onReady] Version JsNative', true)
 			if (document.readyState === 'complete') { // O también compare con 'interactivo'
 				setTimeout(callback, 100) // Programar para que se ejecute de inmediato
 			} else {
-				var readyStateCheck = setInterval(function() {
-					if (document.readyState === 'complete') { // O también compare con 'interactivo'
-						clearInterval(readyStateCheck)
-						setTimeout(callback, 100)
-					}
-				}, 1000)
+				myFunc.onEvent(window, 'load', callback)
 			}
 		}
+	},
+	onEvent: function(element, type, listener, bubbles) {
+		if (window.addEventListener) { // For all major browsers, except IE 8 and earlier
+			(element || window).addEventListener(type, listener, bubbles || false);
+		} else { // For IE 8 and earlier versions
+			(element || window).attachEvent('on' + type, listener);
+		}
+		return arguments;
 	},
 	refresh: _blank => {
 		window.location.href = window.location.href;

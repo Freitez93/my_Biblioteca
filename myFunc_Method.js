@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            myFunc_Method
-// @version         0.1.3
+// @version         0.1.5
 // @description     Funciones personalizadas por mi.
 // @author          Freitez93
 // #github          https://raw.githubusercontent.com/Freitez93/my_Biblioteca/main/myFunc_Method.js
@@ -20,15 +20,15 @@ const myFunc = {
 	// debug config.
 	debug: false,
 	// ------------------------------------------------------- end config.
+	reload: window.location.reload(),
+	refresh: window.location.href = window.location.href,
 
 	msgDebug: (string, force) => {
 		if ( force || myFunc.debug ){
 			console.log('%c'+string, 'font-weight: bold; color:grey')
 		}
 	},
-	parseTarget: target => {
-		return target instanceof HTMLAnchorElement ? target.href : target
-	},
+	parseTarget: target => target instanceof HTMLAnchorElement ? target.href : target,
 	unsafelyAssign: target => {
 		myFunc.navigated = true
 		window.onbeforeunload = null
@@ -124,18 +124,18 @@ const myFunc = {
 	onReady: (callback) => {
 		var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false
 
-		if ( jQueryVer ) {
-			myFunc.msgDebug('[onReady] jQuery v' +jQueryVer, true)
-			if ( jQueryVer.split('.')[0] === '3'){
-				$(window).on('load', callback)
-			} else {
-				$(window).load(callback);
-			}
+		if (document.readyState === 'complete'){
+			setTimeout(callback, 100) // Programar para que se ejecute de inmediato
 		} else {
-			myFunc.msgDebug('[onReady] Version JsNative', true)
-			if (document.readyState === 'complete') { // O también compare con 'interactivo'
-				setTimeout(callback, 100) // Programar para que se ejecute de inmediato
+			if ( jQueryVer ) {
+				myFunc.msgDebug('[onReady] jQuery v' +jQueryVer, true)
+				if ( jQueryVer.split('.')[0] === '3'){
+					$(window).on('load', callback)
+				} else {
+					$(window).load(callback);
+				}
 			} else {
+				myFunc.msgDebug('[onReady] Version JsNative', true)
 				myFunc.onEvent(window, 'load', callback)
 			}
 		}
@@ -147,12 +147,6 @@ const myFunc = {
 			(element || window).attachEvent('on' + type, listener);
 		}
 		return arguments;
-	},
-	refresh: _blank => {
-		window.location.href = window.location.href;
-	},
-	reload: _blank => {
-		window.location.reload();
 	},
 	openInTab: url => {
 		if (typeof GM_openInTab != 'undefined') {
@@ -216,44 +210,45 @@ const myFunc = {
 			return selector;
 		}
 	},
-	getRandom: (min = 0, max = 0) => { // Obtener un numero random entre (min, max)
-		return Math.floor(Math.random() * (max - min)) + min;
-	},
-	sleep: (msDelay = 100) => { // * async await sleep()
-		return new Promise(function(resolve, reject) {
-			setTimeout(resolve, msDelay)
-		})
-	},
-	smoothScroll: (selector, settings = false, msDelay) => { // async await smoothScroll()
-		return new Promise(function(resolve, reject) {
-			let element = myFunc.getElement(selector);
 
-			if (element) {
-				if (settings) {
-					if (settings.focusPage) window.focus();
-				}
-				let elementStats = element.getBoundingClientRect()
-				let adjustment = Math.max(0, (window.outerHeight / 2) - elementStats.height);
-				let distance = elementStats.top - adjustment
+	// Obtener un numero random entre (min, max)
+	getRandom: (min = 0, max = 0) => Math.floor(Math.random() * (max - min)) + min,
 
-				element.scrollIntoView({
-					block: settings.block || 'center',
-					inline: settings.inline || 'nearest',
-					behavior: settings.behavior || 'smooth'
-				});
-				myFunc.sleep(msDelay || distance * 0.8).then(function() { resolve(element) })
-			} else {
-				reject('Elemento no encontrado usando smoothScroll.');
+	// * async await sleep()
+	sleep: (msDelay = 100) => new Promise(function (resolve, reject) {
+		setTimeout(resolve, msDelay);
+	}),
+
+	// async await smoothScroll()
+	smoothScroll: (selector, config, msDelay) => new Promise(function (resolve, reject) {
+		var element = myFunc.getElement(selector);
+		var settings = config ? config : false
+
+		if (element) {
+			if (settings) {
+				if (settings.focusPage) window.focus();
 			}
-		})
-	},
-	arrayIndexOf: (elem, list) => { // Utilice un indexOf reducido, ya que es más rápido que el nativo
+			var elementStats = element.getBoundingClientRect();
+			var adjustment = Math.max(0, (window.outerHeight / 2) - elementStats.height);
+			var distance = elementStats.top - adjustment;
+
+			element.scrollIntoView({
+				block: settings.block || 'center',
+				inline: settings.inline || 'nearest',
+				behavior: settings.behavior || 'smooth'
+			});
+			myFunc.sleep(msDelay || distance * 0.8).then(function () { resolve(element); });
+		} else {
+			reject('Elemento no encontrado usando smoothScroll.');
+		}
+	}),
+	arrayIndexOf: (elem, list) => {
 		var len = list.length;
 		for (var i = 0; i < len; i++) {
 			if (list[i] === elem) {
-				return i
+				return i;
 			}
 		}
-		return -1
+		return -1;
 	}
 };

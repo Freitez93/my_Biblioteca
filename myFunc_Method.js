@@ -20,8 +20,8 @@ const myFunc = {
 	// debug config.
 	debug: false,
 	// ------------------------------------------------------- end config.
-	reload: window.location.reload(),
-	refresh: window.location.href = window.location.href,
+	reload: _blank => window.location.reload(),
+	refresh: _blank => window.location.href = window.location.href,
 
 	msgDebug: (string, force) => {
 		if ( force || myFunc.debug ){

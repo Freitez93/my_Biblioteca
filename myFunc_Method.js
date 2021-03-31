@@ -20,54 +20,66 @@ const myFunc = {
 	// debug config.
 	debug: false,
 	// ------------------------------------------------------- end config.
-	reload: _blank => window.location.reload(),
-	refresh: _blank => window.location.href = window.location.href,
+	reload: function () {
+		window.location.reload();
+	},
+	refresh: function () {
+		window.location.href = window.location.href;
+	},
 
-	msgDebug: (string, force) => {
-		if ( force || myFunc.debug ){
-			console.log('%c'+string, 'font-weight: bold; color:grey')
+	msgDebug: function (string, force) {
+		if (force || myFunc.debug) {
+			console.log('%c' + string, 'font-weight: bold; color:grey');
 		}
 	},
-	parseTarget: target => target instanceof HTMLAnchorElement ? target.href : target,
-	unsafelyAssign: target => {
-		myFunc.navigated = true
-		window.onbeforeunload = null
-		window.location.assign(target)
+	parseTarget: function (target) {
+		return target instanceof HTMLAnchorElement ? target.href : target;
 	},
-	safelyAssign: target => {
-		target = myFunc.parseTarget(target)
+	unsafelyAssign: function (target) {
+		myFunc.navigated = true;
+		window.onbeforeunload = null;
+		window.location.assign(target);
+	},
+	safelyAssign: function (target) {
+		target = myFunc.parseTarget(target);
 		if (myFunc.navigated || !myFunc.isGoodLink(target)) return false;
 
-		myFunc.bypassed = true
-		let url = new myFunc.URL(target)
+		myFunc.bypassed = true;
+		let url = new myFunc.URL(target);
 		if (!url || !url.hash) target += location.hash;
 
-		myFunc.unsafelyAssign(target)
-		return true
+		myFunc.unsafelyAssign(target);
+		return true;
 	},
-	isGoodLink: link => { // Verifica que sea una direccion correcta.
+
+	// Verifica que sea una direccion correcta.
+	isGoodLink: function (link) {
 		if (typeof link != 'string' || (link.split('#')[0] == myFunc.href.split('#')[0] && !myFunc.isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
-			return false
+			return false;
 		}
 		try {
-			new myFunc.URL(link)
+			new myFunc.URL(link);
 		} catch (e) {
-			return false
+			return false;
 		}
-		return true
+		return true;
 	},
-	ifElement: (selector, callback, exfunc) => { // Verifica si un elemento está disponible a través de getElement:
-		var element = myFunc.getElement(selector)
+
+	// Verifica si un elemento está disponible a través de getElement:
+	ifElement: function (selector, callback, exfunc) {
+		var element = myFunc.getElement(selector);
 
 		if (element) {
-			callback(element)
+			callback(element);
 		} else if (exfunc) {
-			exfunc()
+			exfunc();
 		}
 	},
-	awaitElement: (selector, callback, timeout) => { // Espera hasta que un elemento esté disponible a través de getElement. ex: timeout in sec.
+
+	// Espera hasta que un elemento esté disponible a través de getElement. ex: timeout in sec.
+	awaitElement: function (selector, callback, timeout) {
 		var repeat = timeout || 60;
-		var loop = setInterval(function() {
+		var loop = setInterval(function () {
 			var element = myFunc.getElement(selector);
 			if (element) {
 				clearInterval(loop);
@@ -76,18 +88,22 @@ const myFunc = {
 			repeat = (repeat) ? repeat - 1 : clearInterval(loop);
 		}, 1000);
 	},
-	hrefBypass: (regex, callback) => { // Se activa si la expresión regular coincide con cualquier parte de la URL
+
+	// Se activa si la expresión regular coincide con cualquier parte de la URL
+	hrefBypass: function (regex, callback) {
 		if (myFunc.bypassed) return;
 		if (typeof callback != 'function') alert('hrefBypass: Bypass for ' + myFunc.hostName + ' is not a function');
 
-		var result = regex.exec(window.location.href)
+		var result = regex.exec(window.location.href);
 		if (result) {
 			window.document.title += ' - AdsBypasser';
 			myFunc.bypassed = true;
-			callback(result)
+			callback(result);
 		}
 	},
-	domainBypass: (domain, callback) => myFunc.ensureDomLoaded(() => { // Se activa si la expresión regular coincide con cualquier parte del nombre de host.
+
+	// Se activa si la expresión regular coincide con cualquier parte del nombre de host.
+	domainBypass: (domain, callback) => myFunc.ensureDomLoaded(() => {
 		if (myFunc.bypassed) return;
 		if (typeof callback != 'function') alert('domainBypass: Bypass for ' + domain + ' is not a function');
 
@@ -107,36 +123,39 @@ const myFunc = {
 			console.error('[AdsBypasser] Invalid domain:', domain)
 		}
 	}),
-	ensureDomLoaded: (callback, if_not_bypassed) => { // Se activa tan pronto como el DOM está listo
-		if (if_not_bypassed && myFunc.bypassed) return;
+
+	// Se activa tan pronto como el DOM está listo
+	ensureDomLoaded: function (callback, if_not_bypassed) {
+		if (if_not_bypassed && myFunc.bypassed)
+			return;
 		if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
-			callback()
+			callback();
 		} else {
-			let triggered = false
+			let triggered = false;
 			document.addEventListener('DOMContentLoaded', () => {
 				if (!triggered) {
-					triggered = true
-					setTimeout(callback, 100)
+					triggered = true;
+					setTimeout(callback, 100);
 				}
-			})
+			});
 		}
 	},
-	onReady: (callback) => {
-		var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false
-
-		if (document.readyState === 'complete'){
-			setTimeout(callback, 100) // Programar para que se ejecute de inmediato
+	onReady: function (callback, jNativeForce) {
+		if (document.readyState === 'complete') {
+			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
-			if ( jQueryVer ) {
-				myFunc.msgDebug('[onReady] jQuery v' +jQueryVer, true)
-				if ( jQueryVer.split('.')[0] === '3'){
-					$(window).on('load', callback)
+			var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false;
+
+			if (jQueryVer && jNativeForce !== true) {
+				myFunc.msgDebug('[onReady] jQuery v' + jQueryVer, true);
+				if (jQueryVer.split('.')[0] === '3') {
+					$(window).on('load', callback);
 				} else {
 					$(window).load(callback);
 				}
 			} else {
-				myFunc.msgDebug('[onReady] Version JsNative', true)
-				myFunc.onEvent(window, 'load', callback)
+				myFunc.msgDebug('[onReady] Version JsNative', true);
+				myFunc.onEvent(window, 'load', callback);
 			}
 		}
 	},
@@ -148,7 +167,7 @@ const myFunc = {
 		}
 		return arguments;
 	},
-	openInTab: url => {
+	openInTab: function (url) {
 		if (typeof GM_openInTab != 'undefined') {
 			GM_openInTab(url);
 		} else {
@@ -156,7 +175,7 @@ const myFunc = {
 			newWindow.focus();
 		}
 	},
-	deleteValue: name => {
+	deleteValue: function (name) {
 		if (typeof GM_deleteValue !== "undefined" && !name) {
 			var vals = GM_listValues();
 			for (var i in vals) {
@@ -167,12 +186,12 @@ const myFunc = {
 			GM_deleteValue(name);
 		}
 	},
-	setValue: (name, value) => {
+	setValue: function (name, value) {
 		if (typeof GM_setValue !== "undefined") {
 			GM_setValue(name, value);
 		}
 	},
-	getValue: name => {
+	getValue: function (name) {
 		if (typeof GM_listValues !== "undefined" && !name) {
 			var list = {};
 			var vals = GM_listValues();
@@ -187,19 +206,19 @@ const myFunc = {
 			return null;
 		}
 	},
-	setCookie: (name, value, time, path) => {
+	setCookie: function (name, value, time, path) {
 		var expires = new Date();
 		expires.setTime(new Date().getTime() + (time || 365 * 24 * 60 * 60 * 1000));
 		document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + expires.toGMTString() + ";path=" + (path || '/');
 	},
-	getCookie: name => {
+	getCookie: function (name) {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
 		if (parts.length == 2)
 			return parts.pop().split(";").shift();
 	},
-	getElement: (selector, contextNode) => {
-		var ctx = contextNode || document
+	getElement: function (selector, contextNode) {
+		var ctx = contextNode || document;
 
 		if (typeof selector === 'string') {
 			if (selector.indexOf('/') === 0) { // ex: //img[@class="photo"]
@@ -212,37 +231,42 @@ const myFunc = {
 	},
 
 	// Obtener un numero random entre (min, max)
-	getRandom: (min = 0, max = 0) => Math.floor(Math.random() * (max - min)) + min,
+	getRandom: function (min = 0, max = 0) {
+		return Math.floor(Math.random() * (max - min)) + min;
+	},
 
 	// * async await sleep()
-	sleep: (msDelay = 100) => new Promise(function (resolve, reject) {
-		setTimeout(resolve, msDelay);
-	}),
+	sleep: function (msDelay = 100) {
+		return new Promise(function (resolve, reject) {
+			setTimeout(resolve, msDelay);
+		});
+	},
 
 	// async await smoothScroll()
-	smoothScroll: (selector, config, msDelay) => new Promise(function (resolve, reject) {
-		var element = myFunc.getElement(selector);
-		var settings = config ? config : false
+	smoothScroll: function (selector, config, msDelay) {
+		return new Promise(function (resolve, reject) {
+			var element = myFunc.getElement(selector);
+			var settings = config ? config : false;
 
-		if (element) {
-			if (settings) {
+			if (element) {
 				if (settings.focusPage) window.focus();
-			}
-			var elementStats = element.getBoundingClientRect();
-			var adjustment = Math.max(0, (window.outerHeight / 2) - elementStats.height);
-			var distance = elementStats.top - adjustment;
 
-			element.scrollIntoView({
-				block: settings.block || 'center',
-				inline: settings.inline || 'nearest',
-				behavior: settings.behavior || 'smooth'
-			});
-			myFunc.sleep(msDelay || distance * 0.8).then(function () { resolve(element); });
-		} else {
-			reject('Elemento no encontrado usando smoothScroll.');
-		}
-	}),
-	arrayIndexOf: (elem, list) => {
+				var elementStats = element.getBoundingClientRect();
+				var adjustment = Math.max(0, (window.outerHeight / 2) - elementStats.height);
+				var distance = elementStats.top - adjustment;
+
+				element.scrollIntoView({
+					block: settings.block || 'center',
+					inline: settings.inline || 'nearest',
+					behavior: settings.behavior || 'smooth'
+				});
+				myFunc.sleep(msDelay || distance * 0.8).then(() => resolve(element));
+			} else {
+				reject('Elemento no encontrado usando smoothScroll.');
+			}
+		});
+	},
+	arrayIndexOf: function (elem, list) {
 		var len = list.length;
 		for (var i = 0; i < len; i++) {
 			if (list[i] === elem) {

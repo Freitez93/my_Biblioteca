@@ -9,7 +9,7 @@
 
 
 'use strict';
-if (typeof $ === undefined && typeof jQuery === 'function'){
+if (typeof $ === 'undefined' && typeof jQuery === 'function'){
 	window.jQuery = window.$ = jQuery;
 }
 

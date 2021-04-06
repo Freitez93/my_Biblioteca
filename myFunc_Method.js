@@ -9,10 +9,6 @@
 
 
 'use strict';
-if (typeof $ === 'undefined' && typeof jQuery === 'function'){
-	window.jQuery = window.$ = jQuery;
-}
-
 const myFunc = {
 	// ------------------------------------------------------- config Inicial.
 	bypassed: false,
@@ -148,6 +144,7 @@ const myFunc = {
 		if (document.readyState === 'complete') {
 			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
+			if (typeof $ === 'undefined' && typeof jQuery === 'function') window.jQuery = window.$ = jQuery;
 			var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false;
 
 			if (jQueryVer && jNativeForce !== true) {

@@ -17,6 +17,7 @@ const myFunc = {
 	URL: window.URL,
 	href: window.location.href,
 	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
+	jQueryVer: (typeof $ === 'function') ? $.fn.jquery : (typeof jQuery === 'function') ? jQuery.fn.jquery : false
 	// debug config.
 	debug: false,
 	// ------------------------------------------------------- end config.
@@ -144,8 +145,7 @@ const myFunc = {
 		if (document.readyState === 'complete') {
 			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
-			if (typeof $ === 'undefined' && typeof jQuery === 'function') window.jQuery = window.$ = jQuery;
-			var jQueryVer = typeof $ === 'function' ? $.fn.jquery.split(' -')[0] : false;
+			var jQueryVer = myFunc.jQueryVer ? myFunc.jQueryVer.split(' -')[0] : false;
 
 			if (jQueryVer && jNativeForce !== true) {
 				myFunc.msgDebug('[onReady] jQuery v' + jQueryVer, true);

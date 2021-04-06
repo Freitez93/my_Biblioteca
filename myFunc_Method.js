@@ -9,6 +9,10 @@
 
 
 'use strict';
+if (typeof $ === undefined && typeof jQuery === 'function'){
+	window.jQuery = window.$ = jQuery;
+}
+
 const myFunc = {
 	// ------------------------------------------------------- config Inicial.
 	bypassed: false,
@@ -159,11 +163,11 @@ const myFunc = {
 			}
 		}
 	},
-	onEvent: function(element, type, listener, bubbles) {
+	onEvent: function(element, type, callback, bubbles) {
 		if (window.addEventListener) { // For all major browsers, except IE 8 and earlier
-			(element || window).addEventListener(type, listener, bubbles || false);
+			(element || window).addEventListener(type, callback, bubbles || false);
 		} else { // For IE 8 and earlier versions
-			(element || window).attachEvent('on' + type, listener);
+			(element || window).attachEvent('on' + type, callback);
 		}
 		return arguments;
 	},
@@ -266,7 +270,7 @@ const myFunc = {
 			}
 		});
 	},
-	arrayIndexOf: function (elem, list) {
+	indexOfArray: function (elem, list) {
 		var len = list.length;
 		for (var i = 0; i < len; i++) {
 			if (list[i] === elem) {
@@ -274,5 +278,5 @@ const myFunc = {
 			}
 		}
 		return -1;
-	}
+	},
 };

@@ -17,7 +17,7 @@ const myFunc = {
 	URL: window.URL,
 	href: window.location.href,
 	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
-	jQueryVer: (typeof $ === 'function') ? $.fn.jquery : (typeof jQuery === 'function') ? jQuery.fn.jquery : false
+	jQueryVer: (typeof $ === 'function') ? $.fn.jquery : (typeof jQuery === 'function') ? jQuery.fn.jquery : false,
 	// debug config.
 	debug: false,
 	// ------------------------------------------------------- end config.

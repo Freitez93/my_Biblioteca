@@ -11,15 +11,9 @@
 'use strict';
 const myFunc = {
 	// ------------------------------------------------------- config Inicial.
-	bypassed: false,
-	navigated: false,
-	isGoodLink_allowSelf: false,
-	URL: window.URL,
-	href: window.location.href,
-	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
-	jQueryVer: (typeof $ === 'function') ? $.fn.jquery : (typeof jQuery === 'function') ? jQuery.fn.jquery : false,
-	// debug config.
 	debug: false,
+	jQueryVer: (typeof $ === 'function') ? $.fn.jquery : (typeof jQuery === 'function') ? jQuery.fn.jquery : false,
+	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
 	// ------------------------------------------------------- end config.
 	reload: function () {
 		window.location.reload();
@@ -33,37 +27,30 @@ const myFunc = {
 			console.log('%c' + string, 'font-weight: bold; color:grey');
 		}
 	},
-	parseTarget: function (target) {
-		return target instanceof HTMLAnchorElement ? target.href : target;
-	},
-	unsafelyAssign: function (target) {
-		myFunc.navigated = true;
-		window.onbeforeunload = null;
-		window.location.assign(target);
-	},
-	safelyAssign: function (target) {
-		target = myFunc.parseTarget(target);
-		if (myFunc.navigated || !myFunc.isGoodLink(target)) return false;
 
-		myFunc.bypassed = true;
-		let url = new myFunc.URL(target);
-		if (!url || !url.hash) target += location.hash;
-
-		myFunc.unsafelyAssign(target);
-		return true;
+	// Obtener un numero random entre (min, max)
+	getRandom: function (min = 0, max = 0) {
+		return Math.floor(Math.random() * (max - min)) + min;
 	},
 
-	// Verifica que sea una direccion correcta.
-	isGoodLink: function (link) {
-		if (typeof link != 'string' || (link.split('#')[0] == myFunc.href.split('#')[0] && !myFunc.isGoodLink_allowSelf) || link.substr(0, 6) == 'about:' || link.substr(0, 11) == 'javascript:') {
-			return false;
+	// * async await sleep()
+	sleep: function (msDelay = 100) {
+		return new Promise(function (resolve, reject) {
+			setTimeout(resolve, msDelay);
+		});
+	},
+
+	getElement: function (selector, contextNode) {
+		var ctx = contextNode || document;
+
+		if (typeof selector === 'string') {
+			if (selector.indexOf('/') === 0) { // ex: //img[@class="photo"]
+				return document.evaluate(selector, ctx, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+			}
+			return ctx.querySelector(selector);
+		} else if (selector instanceof window.HTMLElement) {
+			return selector;
 		}
-		try {
-			new myFunc.URL(link);
-		} catch (e) {
-			return false;
-		}
-		return true;
 	},
 
 	// Verifica si un elemento está disponible a través de getElement:
@@ -90,64 +77,13 @@ const myFunc = {
 		}, 1000);
 	},
 
-	// Se activa si la expresión regular coincide con cualquier parte de la URL
-	hrefBypass: function (regex, callback) {
-		if (myFunc.bypassed) return;
-		if (typeof callback != 'function') alert('hrefBypass: Bypass for ' + myFunc.hostName + ' is not a function');
-
-		var result = regex.exec(window.location.href);
-		if (result) {
-			window.document.title += ' - AdsBypasser';
-			myFunc.bypassed = true;
-			callback(result);
-		}
-	},
-
-	// Se activa si la expresión regular coincide con cualquier parte del nombre de host.
-	domainBypass: (domain, callback) => myFunc.ensureDomLoaded(() => {
-		if (myFunc.bypassed) return;
-		if (typeof callback != 'function') alert('domainBypass: Bypass for ' + domain + ' is not a function');
-
-		if (typeof domain == 'string') {
-			if (myFunc.hostName == domain || myFunc.hostName.substr(myFunc.hostName.length - (domain.length + 1)) == '.' + domain) {
-				window.document.title += ' - AdsBypasser';
-				myFunc.bypassed = true
-				callback()
-			}
-		} else if ('test' in domain) {
-			if (domain.test(myFunc.hostName)) {
-				window.document.title += ' - AdsBypasser';
-				myFunc.bypassed = true
-				callback()
-			}
-		} else {
-			console.error('[AdsBypasser] Invalid domain:', domain)
-		}
-	}),
-
-	// Se activa tan pronto como el DOM está listo
-	ensureDomLoaded: function (callback, if_not_bypassed) {
-		if (if_not_bypassed && myFunc.bypassed)
-			return;
-		if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
-			callback();
-		} else {
-			let triggered = false;
-			document.addEventListener('DOMContentLoaded', () => {
-				if (!triggered) {
-					triggered = true;
-					setTimeout(callback, 100);
-				}
-			});
-		}
-	},
 	onReady: function (callback, jNativeForce) {
 		if (document.readyState === 'complete') {
 			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
 			var jQueryVer = myFunc.jQueryVer ? myFunc.jQueryVer.split(' -')[0] : false;
 
-			if (jQueryVer && jNativeForce !== true) {
+			if (!jNativeForce && jQueryVer) {
 				myFunc.msgDebug('[onReady] jQuery v' + jQueryVer, true);
 				if (jQueryVer.split('.')[0] === '3') {
 					$(window).on('load', callback);
@@ -217,30 +153,6 @@ const myFunc = {
 		var parts = value.split("; " + name + "=");
 		if (parts.length == 2)
 			return parts.pop().split(";").shift();
-	},
-	getElement: function (selector, contextNode) {
-		var ctx = contextNode || document;
-
-		if (typeof selector === 'string') {
-			if (selector.indexOf('/') === 0) { // ex: //img[@class="photo"]
-				return document.evaluate(selector, ctx, null, window.XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-			}
-			return ctx.querySelector(selector);
-		} else if (selector instanceof window.HTMLElement) {
-			return selector;
-		}
-	},
-
-	// Obtener un numero random entre (min, max)
-	getRandom: function (min = 0, max = 0) {
-		return Math.floor(Math.random() * (max - min)) + min;
-	},
-
-	// * async await sleep()
-	sleep: function (msDelay = 100) {
-		return new Promise(function (resolve, reject) {
-			setTimeout(resolve, msDelay);
-		});
 	},
 
 	// async await smoothScroll()

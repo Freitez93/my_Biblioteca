@@ -81,17 +81,17 @@ const myFunc = {
 		if (document.readyState === 'complete') {
 			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
-			var jQueryVer = myFunc.jQueryVer ? 'v'+myFunc.jQueryVer.split(' -')[0] : false;
+			var jQueryVer = myFunc.jQueryVer ? +myFunc.jQueryVer.split(' -')[0] : false;
 
 			if (!jNativeForce && jQueryVer) {
-				console.log('[onReady] jQuery ' + '%c' + jQueryVer, 'font-weight: bold; color:#2ECC71')
+				console.log('[onReady] jQuery %cv'+jQueryVer, 'font-weight: bold; color:#2ECC71')
 				if (jQueryVer.split('.')[0] === '3') {
 					$(window).on('load', callback);
 				} else {
 					$(window).load(callback);
 				}
 			} else {
-				console.log('[onReady] jQuery ' + '%c' + jQueryVer, 'font-weight: bold; color:#2ECC71')
+				console.log('[onReady] jQuery %cv'+jQueryVer, 'font-weight: bold; color:#2ECC71')
 				myFunc.onEvent(window, 'load', callback);
 			}
 		}

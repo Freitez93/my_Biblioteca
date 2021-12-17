@@ -84,14 +84,14 @@ const myFunc = {
 			var jQueryVer = myFunc.jQueryVer ? myFunc.jQueryVer.split(' -')[0] : false;
 
 			if (!jNativeForce && jQueryVer) {
-				myFunc.msgDebug('[onReady] jQuery v' + jQueryVer, true);
+				console.log('[onReady] jQuery v' + '%c' + jQueryVer, 'font-weight: bold; color:green')
 				if (jQueryVer.split('.')[0] === '3') {
 					$(window).on('load', callback);
 				} else {
 					$(window).load(callback);
 				}
 			} else {
-				myFunc.msgDebug('[onReady] Version JsNative', true);
+				console.log('[onReady] jQuery v' + '%c' + jQueryVer, 'font-weight: bold; color:green')
 				myFunc.onEvent(window, 'load', callback);
 			}
 		}
@@ -166,30 +166,35 @@ const myFunc = {
 	},
 };
 
+/*
+	Extiende los objetos de elemento con una función denominada scrollIntoViewPromise.
+	options: las opciones normales de scrollIntoView sin ningún cambio.
+*/
+
 Element.prototype.scrollIntoViewPromise = function(options) {
-	// "this" refers to the current element (el.scrollIntoViewPromise(options): this = el)
+	// "this" se refiere al elemento actual (el.scrollIntoViewPromise(options): this = el)
 	this.scrollIntoView(options);
 
-	// I create a variable that can be read inside the returned object ({ then: f() }) to expose the current element 
+	// Creo una variable que se puede leer dentro del objeto devuelto ({ then: f() }) para exponer el elemento actual 
 	let parent = this;
 
-	// I return an object with just a property inside called then
-	// then contains a function which accept a function as parameter that will be execute when the scroll ends 
+	// Devuelvo un objeto con solo una propiedad en el interior llamada then
+	// then contiene una función que acepta una función como parámetro que se ejecutará cuando finalice el desplazamiento.
 	return {
 		then: function(x) {
-			// Check out https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API for more informations  
+			// Verificar https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API for more informations  
 			const intersectionObserver = new IntersectionObserver((entries) => {
 				let [entry] = entries;
-				// When the scroll ends (when our element is inside the screen)
+				// Cuando termina el desplazamiento (cuando su elemento está dentro de la pantalla)
 				if (entry.isIntersecting) {
-					// Execute the function into then parameter and stop observing the html element
+					// Ejecute la función en el parámetro y deje de observar el elemento html 
 					setTimeout(() => {
 						x();
 						intersectionObserver.unobserve(parent)
 					}, 100)
 				}
 			});
-			// I start to observe the element where I scrolled 
+			// Empiezo a observar el elemento donde me desplacé.
 			intersectionObserver.observe(parent);
 		}
 	};

@@ -81,7 +81,7 @@ const myFunc = {
 		if (document.readyState === 'complete') {
 			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
-			var jQueryVer = myFunc.jQueryVer ? +myFunc.jQueryVer.split(' -')[0] : false;
+			var jQueryVer = myFunc.jQueryVer ? myFunc.jQueryVer.split(' -')[0] : false;
 
 			if (!jNativeForce && jQueryVer) {
 				console.log('[onReady] jQuery %cv'+jQueryVer, 'font-weight: bold; color:#2ECC71')

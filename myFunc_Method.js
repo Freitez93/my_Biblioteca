@@ -15,32 +15,32 @@ const myFunc = {
 	jQueryVer: (typeof $ === 'function') ? $.fn.jquery : (typeof jQuery === 'function') ? jQuery.fn.jquery : false,
 	hostName: (window.location.hostname.substr(0, 4) == "www.") ? window.location.hostname.substr(4) : window.location.hostname,
 	// ------------------------------------------------------- end config.
-	reload: function () {
+	reload: function() {
 		window.location.reload();
 	},
-	refresh: function () {
+	refresh: function() {
 		window.location.href = window.location.href;
 	},
 
-	msgDebug: function (string, force) {
+	msgDebug: function(string, force) {
 		if (force || myFunc.debug) {
 			console.log('%c' + string, 'font-weight: bold; color:grey');
 		}
 	},
 
 	// Obtener un numero random entre (min, max)
-	getRandom: function (min = 0, max = 0) {
+	getRandom: function(min = 0, max = 0) {
 		return Math.floor(Math.random() * (max - min)) + min;
 	},
 
 	// * async await sleep()
-	sleep: function (msDelay = 100) {
-		return new Promise(function (resolve, reject) {
+	sleep: function(msDelay = 100) {
+		return new Promise(function(resolve, reject) {
 			setTimeout(resolve, msDelay);
 		});
 	},
 
-	getElement: function (selector, contextNode) {
+	getElement: function(selector, contextNode) {
 		var ctx = contextNode || document;
 
 		if (typeof selector === 'string') {
@@ -54,7 +54,7 @@ const myFunc = {
 	},
 
 	// Verifica si un elemento está disponible a través de getElement:
-	ifElement: function (selector, callback, exfunc) {
+	ifElement: function(selector, callback, exfunc) {
 		var element = myFunc.getElement(selector);
 
 		if (element) {
@@ -65,9 +65,9 @@ const myFunc = {
 	},
 
 	// Espera hasta que un elemento esté disponible a través de getElement. ex: timeout in sec.
-	awaitElement: function (selector, callback, timeout) {
+	awaitElement: function(selector, callback, timeout) {
 		var repeat = timeout || 60;
-		var loop = setInterval(function () {
+		var loop = setInterval(function() {
 			var element = myFunc.getElement(selector);
 			if (element) {
 				clearInterval(loop);
@@ -77,7 +77,7 @@ const myFunc = {
 		}, 1000);
 	},
 
-	onReady: function (callback, jNativeForce) {
+	onReady: function(callback, jNativeForce) {
 		if (document.readyState === 'complete') {
 			setTimeout(callback, 100); // Programar para que se ejecute de inmediato
 		} else {
@@ -104,7 +104,7 @@ const myFunc = {
 		}
 		return arguments;
 	},
-	openInTab: function (url) {
+	openInTab: function(url) {
 		if (typeof GM_openInTab != 'undefined') {
 			GM_openInTab(url);
 		} else {
@@ -112,7 +112,7 @@ const myFunc = {
 			newWindow.focus();
 		}
 	},
-	deleteValue: function (name) {
+	deleteValue: function(name) {
 		if (typeof GM_deleteValue !== "undefined" && !name) {
 			var vals = GM_listValues();
 			for (var i in vals) {
@@ -123,12 +123,12 @@ const myFunc = {
 			GM_deleteValue(name);
 		}
 	},
-	setValue: function (name, value) {
+	setValue: function(name, value) {
 		if (typeof GM_setValue !== "undefined") {
 			GM_setValue(name, value);
 		}
 	},
-	getValue: function (name) {
+	getValue: function(name) {
 		if (typeof GM_listValues !== "undefined" && !name) {
 			var list = {};
 			var vals = GM_listValues();
@@ -143,43 +143,19 @@ const myFunc = {
 			return null;
 		}
 	},
-	setCookie: function (name, value, time, path) {
+	setCookie: function(name, value, time, path) {
 		var expires = new Date();
 		expires.setTime(new Date().getTime() + (time || 365 * 24 * 60 * 60 * 1000));
 		document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + expires.toGMTString() + ";path=" + (path || '/');
 	},
-	getCookie: function (name) {
+	getCookie: function(name) {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
 		if (parts.length == 2)
 			return parts.pop().split(";").shift();
 	},
 
-	// async await smoothScroll()
-	smoothScroll: function (selector, config, msDelay) {
-		return new Promise(function (resolve, reject) {
-			var element = myFunc.getElement(selector);
-			var settings = config ? config : false;
-
-			if (element) {
-				if (settings.focusPage) window.focus();
-
-				var elementStats = element.getBoundingClientRect();
-				var adjustment = Math.max(0, (window.outerHeight / 2) - elementStats.height);
-				var distance = elementStats.top - adjustment;
-
-				element.scrollIntoView({
-					block: settings.block || 'center',
-					inline: settings.inline || 'nearest',
-					behavior: settings.behavior || 'smooth'
-				});
-				myFunc.sleep(msDelay || distance * 0.8).then(() => resolve(element));
-			} else {
-				reject('Elemento no encontrado usando smoothScroll.');
-			}
-		});
-	},
-	indexOfArray: function (elem, list) {
+	indexOfArray: function(elem, list) {
 		var len = list.length;
 		for (var i = 0; i < len; i++) {
 			if (list[i] === elem) {
@@ -189,3 +165,32 @@ const myFunc = {
 		return -1;
 	},
 };
+
+Element.prototype.scrollIntoViewPromise = function(options) {
+	// "this" refers to the current element (el.scrollIntoViewPromise(options): this = el)
+	this.scrollIntoView(options);
+
+	// I create a variable that can be read inside the returned object ({ then: f() }) to expose the current element 
+	let parent = this;
+
+	// I return an object with just a property inside called then
+	// then contains a function which accept a function as parameter that will be execute when the scroll ends 
+	return {
+		then: function(x) {
+			// Check out https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API for more informations  
+			const intersectionObserver = new IntersectionObserver((entries) => {
+				let [entry] = entries;
+				// When the scroll ends (when our element is inside the screen)
+				if (entry.isIntersecting) {
+					// Execute the function into then parameter and stop observing the html element
+					setTimeout(() => {
+						x();
+						intersectionObserver.unobserve(parent)
+					}, 100)
+				}
+			});
+			// I start to observe the element where I scrolled 
+			intersectionObserver.observe(parent);
+		}
+	};
+}

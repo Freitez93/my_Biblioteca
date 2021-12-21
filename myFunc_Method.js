@@ -84,7 +84,9 @@ const myFunc = {
 			var jQueryVer = myFunc.jQueryVer ? myFunc.jQueryVer.split(' -')[0] : false;
 
 			if (!jNativeForce && jQueryVer) {
+				var $ = $ || jQuery
 				console.log('[onReady] jQuery %cv'+jQueryVer, 'font-weight: bold; color:#2ECC71')
+
 				if (jQueryVer.split('.')[0] === '3') {
 					$(window).on('load', callback);
 				} else {

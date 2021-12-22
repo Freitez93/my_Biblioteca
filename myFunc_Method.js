@@ -74,8 +74,7 @@ const myFunc = {
 				callback(element);
 			}
 			repeat = (repeat) ? repeat - 1 : (
-				console.log('[awaitElement] Error en esperar a que aparesca el element.')
-				clearInterval(loop)
+				console.log('[awaitElement] Error en esperar a que aparesca el element.'), clearInterval(loop)
 			)
 		}, 1000);
 	},

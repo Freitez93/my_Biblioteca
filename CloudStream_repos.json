@@ -1,8 +1,10 @@
 {
-    "name": "Repository of Freitez93",
+    "name": "Repository of CloudStream",
     "description": "Repository All",
     "manifestVersion": 1,
     "pluginLists": [
-        "https://raw.githubusercontent.com/Freitez93/CS3xxx-Ext/builds/plugins.json"
+        "https://raw.githubusercontent.com/Freitez93/CS3xxx-Ext/builds/plugins.json",
+        "https://raw.githubusercontent.com/misajimenezmx/storm-ext/builds/plugins.json",
+        "https://raw.githubusercontent.com/Stormunblessed/kronch-ext/builds/plugins.json"
     ]
 }

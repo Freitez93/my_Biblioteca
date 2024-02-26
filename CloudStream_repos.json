@@ -1,0 +1,8 @@
+{
+    "name": "Repository of Freitez93",
+    "description": "Repository All",
+    "manifestVersion": 1,
+    "pluginLists": [
+        "https://raw.githubusercontent.com/Freitez93/CS3xxx-Ext/builds/plugins.json"
+    ]
+}

@@ -1,6 +1,6 @@
 {
     "name": "Repository of Hexated",
-    "description": "Repository All",
+    "description": "Hexated-Extensions",
     "manifestVersion": 1,
     "pluginLists": [
         https://raw.githubusercontent.com/hexated/cloudstream-extensions-hexated/builds/plugins.json

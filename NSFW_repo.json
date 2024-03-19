@@ -1,0 +1,8 @@
+{
+    "name": "CS3 - Repository NSFW",
+    "description": "Repository of provider Adult(+18) NSFW",
+    "manifestVersion": 1,
+    "pluginLists": [
+        "https://raw.githubusercontent.com/misajimenezmx/storm-ext/builds/plugins.json"
+    ]
+}

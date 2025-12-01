@@ -1,8 +1,8 @@
 {
-    "name": "CS3 - Repository Spanish",
-    "description": "Repository of misajimenezmx",
+    "name": "CS3 - Repository Freitez93",
+    "description": "TestPlugins Para CloudStream.",
     "manifestVersion": 1,
     "pluginLists": [
-        "https://raw.githubusercontent.com/misajimenezmx/storm-ext/builds/plugins.json"
+        "https://raw.githubusercontent.com/Freitez93/TestPlugins-CS/refs/heads/builds/plugins.json"
     ]
 }

@@ -1,0 +1,8 @@
+{
+    "name": "CS3 - Repository Randoms",
+    "description": "Listas de Plugins Randoms para CloudStream.",
+    "manifestVersion": 1,
+    "pluginLists": [
+        https://raw.githubusercontent.com/mooncrown04/TestPlugins/builds/plugins.json
+    ]
+}

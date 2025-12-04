@@ -1,7 +1,8 @@
 {
     "name": "CS3 - Repository Freitez93",
-    "description": "TestPlugins Para CloudStream.",
+    "description": "Plugins en LAT/ESP Para CloudStream.",
     "manifestVersion": 1,
+    "iconUrl": "https://cdn-icons-png.flaticon.com/128/977/977914.png",
     "pluginLists": [
         "https://raw.githubusercontent.com/Freitez93/TestPlugins-CS/refs/heads/builds/plugins.json"
     ]

@@ -3,6 +3,7 @@
     "description": "Repository of Phisher98 - Adult(+18) NSFW",
     "manifestVersion": 1,
     "pluginLists": [
-        "https://raw.githubusercontent.com/phisher98/CXXX/refs/heads/builds/plugins.json"
+        "https://raw.githubusercontent.com/phisher98/CXXX/builds/plugins.json",
+        "https://raw.githubusercontent.com/Kraptor123/Cs-GizliKeyif/builds/plugins.json"
     ]
 }

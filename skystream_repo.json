@@ -1,0 +1,9 @@
+{
+  "name": "Ramdon",
+  "packageName": "dev.akash.ramdon",
+  "description": "SkyStream plugins repository Ramdon",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/Lonelyyuvan/skystream-plugins/main/dist/plugins.json"
+  ]
+}
